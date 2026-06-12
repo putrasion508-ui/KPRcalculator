@@ -1,0 +1,3337 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#10b981">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="KPR">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="./favicon-16.png">
+<link rel="icon" type="image/svg+xml" href="./icon.svg">
+<title>Kalkulator KPR</title>
+<style>
+:root {
+  --primary: #10b981;
+  --primary-dark: #059669;
+  --primary-light: #d1fae5;
+  --danger: #ef4444;
+  --danger-light: #fee2e2;
+  --warning: #f59e0b;
+  --warning-light: #fef3c7;
+  --info: #3b82f6;
+  --info-light: #dbeafe;
+  --purple: #8b5cf6;
+  --purple-light: #ede9fe;
+  --bg: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-input: #f1f5f9;
+  --border: #e2e8f0;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --text-soft: #94a3b8;
+  --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-lg: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+  --radius: 14px;
+  --radius-sm: 10px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --bg-card: #1e293b;
+  --bg-input: #334155;
+  --border: #334155;
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-soft: #64748b;
+  --primary-light: #064e3b;
+  --danger-light: #7f1d1d;
+  --warning-light: #78350f;
+  --info-light: #1e3a8a;
+  --purple-light: #4c1d95;
+  --shadow: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-lg: 0 4px 6px rgba(0,0,0,0.4);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.4;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: contain;
+}
+body {
+  padding-top: var(--safe-top);
+  padding-bottom: calc(72px + var(--safe-bottom));
+  min-height: 100vh;
+}
+
+/* HEADER */
+.app-header {
+  position: sticky; top: 0; z-index: 100;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  padding: calc(var(--safe-top) + 14px) 18px 14px;
+  display: flex; justify-content: space-between; align-items: center;
+  box-shadow: var(--shadow);
+  margin-top: calc(-1 * var(--safe-top));
+}
+.app-header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+.app-header h1 small { font-size: 11px; opacity: 0.85; font-weight: 400; display: block; margin-top: 2px; }
+.theme-toggle {
+  background: rgba(255,255,255,0.18); border: none; color: white;
+  width: 38px; height: 38px; border-radius: 50%;
+  font-size: 18px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* MAIN */
+.app-main { padding: 16px; max-width: 600px; margin: 0 auto; }
+.tab-content { display: none; animation: fadeIn 0.2s ease; }
+.tab-content.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* CARDS */
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+.card-title {
+  font-size: 13px; font-weight: 600; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+}
+.card-title .icon { font-size: 18px; }
+.card-subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5; }
+
+/* HERO METRIC */
+.hero-metric {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white; padding: 20px; border-radius: var(--radius);
+  margin-bottom: 14px;
+}
+.hero-metric .label { font-size: 12px; opacity: 0.85; text-transform: uppercase; letter-spacing: 0.5px; }
+.hero-metric .value { font-size: 28px; font-weight: 800; margin: 4px 0; letter-spacing: -0.5px; }
+.hero-metric .sub { font-size: 13px; opacity: 0.9; }
+
+/* PROGRESS */
+.progress-track {
+  background: rgba(255,255,255,0.2); border-radius: 100px;
+  height: 8px; margin-top: 12px; overflow: hidden;
+}
+.progress-fill {
+  background: white; height: 100%; border-radius: 100px;
+  transition: width 0.4s ease;
+}
+
+/* STAT GRID */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.stat-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+.stat-box {
+  background: var(--bg-card); padding: 12px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); text-align: center;
+}
+.stat-box .label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 4px; }
+.stat-box .value { font-size: 16px; font-weight: 700; color: var(--text); }
+.stat-box .sub { font-size: 11px; color: var(--text-soft); margin-top: 2px; }
+.stat-box.good .value { color: var(--primary); }
+.stat-box.bad .value { color: var(--danger); }
+.stat-box.warn .value { color: var(--warning); }
+.stat-box.info .value { color: var(--info); }
+
+/* COUNTDOWN */
+.countdown-list { display: flex; flex-direction: column; gap: 10px; }
+.countdown-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 12px; background: var(--bg-input); border-radius: var(--radius-sm);
+  border-left: 4px solid var(--info);
+}
+.countdown-item.urgent { border-left-color: var(--danger); background: var(--danger-light); }
+.countdown-item.soon { border-left-color: var(--warning); background: var(--warning-light); }
+.countdown-item.ok { border-left-color: var(--primary); background: var(--primary-light); }
+.countdown-item .text { font-size: 13px; }
+.countdown-item .text .title { font-weight: 600; margin-bottom: 2px; }
+.countdown-item .text .date { font-size: 11px; color: var(--text-muted); }
+.countdown-item .badge {
+  font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 100px;
+  background: white; color: var(--text); white-space: nowrap;
+}
+[data-theme="dark"] .countdown-item .badge { background: var(--bg-card); }
+
+/* INPUTS */
+.input-group { margin-bottom: 12px; }
+.input-group label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; font-weight: 500; }
+.input-group input, .input-group select {
+  width: 100%; padding: 12px; border: 1px solid var(--border);
+  background: var(--bg-input); color: var(--text);
+  border-radius: var(--radius-sm); font-size: 16px; font-family: inherit;
+  -webkit-appearance: none;
+}
+.input-group input:focus, .input-group select:focus {
+  outline: none; border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+.input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.input-suffix { position: relative; }
+.input-suffix .suffix {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  color: var(--text-muted); font-size: 13px; pointer-events: none;
+}
+
+/* BUTTONS */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 12px 18px; border-radius: var(--radius-sm); border: none;
+  font-size: 15px; font-weight: 600; font-family: inherit;
+  cursor: pointer; transition: all 0.15s ease;
+  min-height: 44px; width: 100%;
+}
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:active { background: var(--primary-dark); transform: scale(0.98); }
+.btn-secondary { background: var(--bg-input); color: var(--text); border: 1px solid var(--border); }
+.btn-danger { background: var(--danger); color: white; }
+.btn-ghost { background: transparent; color: var(--primary); border: 1px solid var(--primary); }
+.btn-small { padding: 8px 12px; font-size: 13px; min-height: 36px; width: auto; }
+.btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* SCENARIO CARDS (accordion) */
+.scenario-card {
+  background: var(--bg-card); border-radius: var(--radius);
+  border: 1px solid var(--border); margin-bottom: 12px;
+  overflow: hidden; box-shadow: var(--shadow);
+}
+.scenario-header {
+  padding: 14px 16px; display: flex; align-items: center; gap: 12px;
+  cursor: pointer; user-select: none;
+}
+.scenario-icon {
+  width: 38px; height: 38px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.scenario-icon.A { background: var(--info-light); color: var(--info); }
+.scenario-icon.B { background: var(--purple-light); color: var(--purple); }
+.scenario-icon.C { background: var(--warning-light); color: var(--warning); }
+.scenario-icon.D { background: var(--primary-light); color: var(--primary); }
+.scenario-icon.E { background: var(--danger-light); color: var(--danger); }
+.scenario-icon.H { background: linear-gradient(135deg, var(--primary), var(--purple)); color: white; }
+.scenario-title { flex: 1; }
+.scenario-title .name { font-size: 15px; font-weight: 700; }
+.scenario-title .desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.scenario-chevron { color: var(--text-soft); transition: transform 0.2s; font-size: 18px; }
+.scenario-card.open .scenario-chevron { transform: rotate(90deg); }
+.scenario-body { display: none; padding: 0 16px 16px; border-top: 1px solid var(--border); padding-top: 14px; }
+.scenario-card.open .scenario-body { display: block; }
+
+/* RESULT BOX */
+.result-box {
+  margin-top: 14px; padding: 14px;
+  background: var(--bg-input); border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+.result-box .label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 8px; font-weight: 600; }
+.result-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; border-bottom: 1px dashed var(--border); font-size: 14px;
+}
+.result-row:last-child { border-bottom: none; }
+.result-row .key { color: var(--text-muted); font-size: 13px; }
+.result-row .val { font-weight: 700; }
+.result-row .val.good { color: var(--primary); }
+.result-row .val.bad { color: var(--danger); }
+.result-row .val.warn { color: var(--warning); }
+.result-row .val.big { font-size: 16px; }
+
+/* VERDICT BADGE */
+.verdict {
+  margin-top: 12px; padding: 12px; border-radius: var(--radius-sm);
+  font-size: 14px; font-weight: 600; text-align: center;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.verdict.good { background: var(--primary-light); color: var(--primary-dark); }
+.verdict.bad { background: var(--danger-light); color: var(--danger); }
+.verdict.warn { background: var(--warning-light); color: var(--warning); }
+[data-theme="dark"] .verdict.good { color: #6ee7b7; }
+[data-theme="dark"] .verdict.bad { color: #fca5a5; }
+[data-theme="dark"] .verdict.warn { color: #fcd34d; }
+
+/* TABLES */
+.schedule-table {
+  width: 100%; border-collapse: collapse; font-size: 12px;
+}
+.schedule-table th, .schedule-table td {
+  padding: 8px 6px; text-align: right; border-bottom: 1px solid var(--border);
+}
+.schedule-table th {
+  background: var(--bg-input); font-weight: 600; color: var(--text-muted);
+  text-transform: uppercase; font-size: 10px; letter-spacing: 0.3px;
+  position: sticky; top: 0;
+}
+.schedule-table th:first-child, .schedule-table td:first-child { text-align: left; }
+.schedule-table tr.highlight { background: var(--primary-light); font-weight: 600; }
+[data-theme="dark"] .schedule-table tr.highlight { background: rgba(16,185,129,0.15); }
+
+/* TEXTAREA */
+.notes-area {
+  width: 100%; min-height: 240px;
+  padding: 14px; border: 1px solid var(--border);
+  background: var(--bg-input); color: var(--text);
+  border-radius: var(--radius-sm); font-size: 15px; font-family: inherit;
+  resize: vertical; line-height: 1.5;
+}
+
+/* PARSIAL EVENT LIST */
+.event-list { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+.event-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 12px; background: var(--bg-input); border-radius: var(--radius-sm);
+  border-left: 3px solid var(--primary);
+}
+.event-item .info { font-size: 13px; }
+.event-item .info .amount { font-weight: 700; color: var(--primary); }
+.event-item .info .meta { font-size: 11px; color: var(--text-muted); }
+.event-item .remove-btn {
+  background: none; border: none; color: var(--danger);
+  font-size: 18px; cursor: pointer; padding: 4px 8px;
+}
+
+/* BOTTOM NAV */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  display: flex; justify-content: space-around;
+  padding: 8px 4px calc(8px + var(--safe-bottom));
+  z-index: 100; box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
+}
+.nav-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--text-soft); padding: 6px 8px;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  font-size: 10px; font-weight: 500; flex: 1;
+  min-height: 44px; transition: color 0.15s;
+  font-family: inherit;
+}
+.nav-btn .icon { font-size: 22px; }
+.nav-btn.active { color: var(--primary); }
+
+/* COMPARISON TABLE */
+.compare-table {
+  display: grid; grid-template-columns: 1.2fr repeat(var(--cols, 5), 1fr);
+  gap: 1px; background: var(--border); border-radius: var(--radius-sm); overflow: hidden;
+  font-size: 12px;
+}
+.compare-table > div { background: var(--bg-card); padding: 10px 8px; }
+.compare-table .head { background: var(--bg-input); font-weight: 600; font-size: 11px; }
+.compare-table .row-label { background: var(--bg-input); font-weight: 500; color: var(--text-muted); text-align: left; }
+.compare-table .best { background: var(--primary-light); color: var(--primary-dark); font-weight: 700; }
+[data-theme="dark"] .compare-table .best { color: #6ee7b7; }
+.compare-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* CHART CONTAINER */
+.chart-container { position: relative; height: 240px; margin-top: 14px; }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  display: none; align-items: center; justify-content: center;
+  z-index: 200; padding: 20px;
+}
+.modal-overlay.active { display: flex; }
+.modal {
+  background: var(--bg-card); border-radius: var(--radius);
+  padding: 20px; max-width: 400px; width: 100%;
+  max-height: 90vh; overflow-y: auto;
+}
+.modal h3 { margin-bottom: 12px; font-size: 18px; }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: calc(90px + var(--safe-bottom));
+  left: 50%; transform: translateX(-50%);
+  background: var(--text); color: var(--bg);
+  padding: 10px 18px; border-radius: 100px;
+  font-size: 13px; font-weight: 500;
+  z-index: 300; opacity: 0; transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none; max-width: 90%;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+
+/* BADGE */
+.badge {
+  display: inline-block; padding: 2px 8px; border-radius: 100px;
+  font-size: 11px; font-weight: 600;
+}
+.badge.green { background: var(--primary-light); color: var(--primary-dark); }
+.badge.red { background: var(--danger-light); color: var(--danger); }
+.badge.yellow { background: var(--warning-light); color: var(--warning); }
+.badge.blue { background: var(--info-light); color: var(--info); }
+
+/* HELP TEXT */
+.help { font-size: 11px; color: var(--text-soft); margin-top: 4px; line-height: 1.4; }
+
+/* RESET TOOLBAR */
+.reset-toolbar {
+  display: flex; gap: 8px; margin-bottom: 14px;
+}
+.btn-reset-tool {
+  flex: 1; padding: 10px 12px;
+  background: var(--bg-card); border: 1px solid var(--warning);
+  color: var(--warning); border-radius: var(--radius-sm);
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  font-family: inherit; min-height: 40px;
+}
+.btn-reset-tool:active { background: var(--warning-light); transform: scale(0.98); }
+.btn-reset-scn {
+  background: transparent; border: 1px solid var(--border);
+  color: var(--text-muted); width: 32px; height: 32px;
+  border-radius: 8px; font-size: 14px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  margin-right: 6px; flex-shrink: 0;
+}
+.btn-reset-scn:active { background: var(--warning-light); color: var(--warning); border-color: var(--warning); }
+
+/* SMART PLAN */
+.smart-plan-card {
+  background: linear-gradient(135deg, #f0fdf4, #ecfeff);
+  border: 2px solid var(--primary);
+  border-radius: var(--radius); padding: 16px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow-lg);
+}
+[data-theme="dark"] .smart-plan-card {
+  background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(6,182,212,0.08));
+}
+.smart-plan-header {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding-bottom: 12px; border-bottom: 1px solid var(--border);
+  margin-bottom: 14px;
+}
+.sp-emoji { font-size: 32px; line-height: 1; }
+.sp-title { font-size: 16px; font-weight: 700; color: var(--primary-dark); }
+[data-theme="dark"] .sp-title { color: #6ee7b7; }
+.sp-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.smart-plan-btn { margin-top: 8px; background: var(--primary); }
+.recommend-baseline {
+  background: var(--bg-card); padding: 10px 12px;
+  border-radius: var(--radius-sm); border: 1px solid var(--border);
+  margin-top: 14px; margin-bottom: 12px;
+}
+.rb-label { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+.rb-detail { font-size: 13px; margin-top: 4px; }
+.recommend-header-text {
+  font-size: 14px; font-weight: 700; color: var(--primary-dark);
+  margin: 14px 0 10px; text-align: center;
+}
+[data-theme="dark"] .recommend-header-text { color: #6ee7b7; }
+.recommend-item {
+  display: flex; gap: 12px; padding: 12px;
+  background: var(--bg-card); border-radius: var(--radius-sm);
+  border: 1px solid var(--border); margin-bottom: 10px;
+  border-left: 4px solid var(--primary);
+}
+.recommend-item.warn { border-left-color: var(--warning); }
+.recommend-item.bad { border-left-color: var(--danger); }
+.recommend-rank { font-size: 24px; line-height: 1; flex-shrink: 0; }
+.recommend-body { flex: 1; min-width: 0; }
+.recommend-label {
+  font-size: 14px; font-weight: 600; color: var(--text);
+  margin-bottom: 8px; line-height: 1.3;
+}
+.recommend-stats {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 6px; margin-bottom: 8px;
+}
+.rec-stat {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 4px 8px; background: var(--bg-input);
+  border-radius: 6px; font-size: 12px;
+}
+.rec-stat-label { color: var(--text-muted); font-size: 11px; }
+.rec-stat-val { font-weight: 700; }
+.rec-stat-val.good { color: var(--primary); }
+.rec-stat-val.bad { color: var(--danger); }
+.rec-stat-val.warn { color: var(--warning); }
+.recommend-extra {
+  display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 8px;
+}
+
+/* MODE INFO BLOCKS (Mode A vs Mode B feedback) */
+.rec-mode-info {
+  background: var(--bg-input); padding: 8px 10px;
+  border-radius: 6px; font-size: 12px; line-height: 1.5;
+  margin-bottom: 8px;
+}
+.rec-mode-info b { color: var(--primary); }
+.rec-mode-info small { color: var(--text-muted); }
+
+.mode-info-box {
+  background: var(--bg-input); border-radius: var(--radius-sm);
+  padding: 10px 12px; margin: 10px 0; font-size: 13px;
+}
+.mode-info-box.mode-a { border-left: 4px solid #10b981; }
+.mode-info-box.mode-b { border-left: 4px solid #06b6d4; }
+.mode-info-title { font-weight: 700; margin-bottom: 4px; }
+.mode-info-desc { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
+.mode-info-evolution { display: flex; flex-direction: column; gap: 4px; }
+.mode-evo-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 12px; padding: 3px 0;
+}
+.mode-evo-row > span:first-child { color: var(--text-muted); flex: 1; }
+.mode-evo-row.mode-evo-final {
+  border-top: 1px solid var(--border); margin-top: 4px; padding-top: 6px;
+}
+.mode-evo-row b.good { color: #10b981; }
+
+/* CONTEXT BANNER */
+.context-banner {
+  background: var(--info-light); border-left: 4px solid var(--info);
+  padding: 10px 12px; border-radius: var(--radius-sm);
+  font-size: 12px; color: var(--info); margin-bottom: 14px; line-height: 1.5;
+}
+[data-theme="dark"] .context-banner { color: #93c5fd; }
+.context-banner strong { display: block; margin-bottom: 2px; }
+
+/* PRESET CHIPS */
+.preset-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; margin-bottom: 8px; }
+.chip {
+  padding: 6px 12px; background: var(--bg-input); border: 1px solid var(--border);
+  border-radius: 100px; font-size: 12px; cursor: pointer; color: var(--text);
+  font-family: inherit;
+}
+.chip.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+/* MULTI-PHASE FLOATING */
+.phase-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.phase-item { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; padding: 8px; background: var(--bg-input); border-radius: var(--radius-sm); }
+.phase-item .phase-label { font-size: 11px; color: var(--text-muted); }
+.phase-item input { padding: 6px 8px; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <h1>
+    Kalkulator KPR
+    <small id="header-subtitle">Memuat...</small>
+  </h1>
+  <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+</header>
+
+<main class="app-main">
+
+  <!-- ============ TAB: DASHBOARD ============ -->
+  <section id="tab-dashboard" class="tab-content active">
+    <div class="hero-metric">
+      <div class="label">Sisa Pokok (Outstanding)</div>
+      <div class="value" id="hero-os">Rp 0</div>
+      <div class="sub" id="hero-progress">0 dari 0 bulan</div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">⏱️</span>Timeline Kritikal</div>
+      <div class="countdown-list" id="countdown-list"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">📊</span>Posisi Pembayaran</div>
+      <div class="stat-grid">
+        <div class="stat-box">
+          <div class="label">Total Dibayar</div>
+          <div class="value" id="stat-paid">Rp 0</div>
+          <div class="sub" id="stat-paid-sub"></div>
+        </div>
+        <div class="stat-box good">
+          <div class="label">Pokok Terbayar</div>
+          <div class="value" id="stat-principal">Rp 0</div>
+          <div class="sub" id="stat-principal-sub"></div>
+        </div>
+        <div class="stat-box bad">
+          <div class="label">Bunga Terbayar</div>
+          <div class="value" id="stat-interest">Rp 0</div>
+          <div class="sub" id="stat-interest-sub"></div>
+        </div>
+        <div class="stat-box info">
+          <div class="label">Cicilan</div>
+          <div class="value" id="stat-cicilan">Rp 0</div>
+          <div class="sub">per bulan</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">📈</span>Proyeksi Sisa Tenor</div>
+      <div class="card-subtitle">Cicilan kalau floating rate aktif setelah masa fixed habis</div>
+      <div class="stat-grid three">
+        <div class="stat-box good">
+          <div class="label">Optimis 10%</div>
+          <div class="value" id="proj-10">Rp 0</div>
+          <div class="sub">/bulan</div>
+        </div>
+        <div class="stat-box warn">
+          <div class="label">Realistis 12%</div>
+          <div class="value" id="proj-12">Rp 0</div>
+          <div class="sub">/bulan</div>
+        </div>
+        <div class="stat-box bad">
+          <div class="label">Pesimis 14%</div>
+          <div class="value" id="proj-14">Rp 0</div>
+          <div class="sub">/bulan</div>
+        </div>
+      </div>
+      <div class="help" style="margin-top:10px">💡 Counter rate BRI saat ini ~13%. Setelah Mei 2027, cicilan akan loncat ke salah satu skenario di atas.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🥧</span>Komposisi Pokok vs Bunga</div>
+      <div class="chart-container"><canvas id="chart-composition"></canvas></div>
+    </div>
+  </section>
+
+  <!-- ============ TAB: SIMULATOR ============ -->
+  <section id="tab-simulator" class="tab-content">
+    <div class="context-banner">
+      <strong>💡 Cara pakai</strong>
+      Tap setiap skenario untuk simulasi. Hasil tampil otomatis. Bandingkan semuanya di tabel comparison di bawah.
+    </div>
+
+    <!-- RESET TOOLBAR -->
+    <div class="reset-toolbar">
+      <button class="btn-reset-tool" onclick="restoreToInitial()" title="Kembalikan ke kondisi awal saat app dibuka">
+        ↩️ Batal Semua Perubahan
+      </button>
+      <button class="btn-reset-tool" onclick="resetAllScenarios()" title="Reset semua skenario ke default">
+        ↻ Reset Semua
+      </button>
+    </div>
+
+    <!-- ============ SMART PLAN RECOMMENDER ============ -->
+    <div class="smart-plan-card">
+      <div class="smart-plan-header">
+        <span class="sp-emoji">💡</span>
+        <div>
+          <div class="sp-title">Smart Plan</div>
+          <div class="sp-subtitle">Cari strategi pelunasan paling efisien sesuai cash flow kamu</div>
+        </div>
+      </div>
+      
+      <div class="smart-plan-form">
+        <div class="input-row">
+          <div class="input-group">
+            <label>💰 Cash tersedia sekarang</label>
+            <input type="number" id="rec-cash-now" value="0" step="10000000" placeholder="Rp 0">
+            <div class="help">Lump sum untuk pelunasan langsung (opsional)</div>
+          </div>
+          <div class="input-group">
+            <label>📅 Tabungan per 6 bulan</label>
+            <input type="number" id="rec-cash-6mo" value="300000000" step="10000000">
+            <div class="help">Yang bisa disisihkan untuk parsial</div>
+          </div>
+        </div>
+        
+        <div class="input-group">
+          <label>🎯 Prioritas Utama</label>
+          <select id="rec-priority">
+            <option value="min_cash">Minimalkan total uang keluar (paling hemat)</option>
+            <option value="fast_lunas">Secepatnya bebas KPR</option>
+            <option value="no_penalty">Hindari penalty</option>
+            <option value="cash_flow">Cash flow bulanan ringan</option>
+          </select>
+        </div>
+        
+        <div class="input-group">
+          <label>🔄 Mode Pelunasan Parsial</label>
+          <select id="rec-mode">
+            <option value="reduce_tenor">⚡ Kurangi tenor (cicilan tetap, lebih hemat total)</option>
+            <option value="reduce_payment">💧 Kurangi cicilan (tenor tetap, cash flow ringan)</option>
+          </select>
+          <div class="help">Mode A: lunas lebih cepat, hemat bunga. Mode B: cicilan bulanan turun setelah parsial.</div>
+        </div>
+        
+        <div class="input-group">
+          <label>📈 Asumsi Rate Floating Setelah Fixed (%)</label>
+          <div class="preset-chips">
+            <button class="chip" onclick="document.getElementById('rec-float-rate').value=10">Optimis 10%</button>
+            <button class="chip" onclick="document.getElementById('rec-float-rate').value=12">Realistis 12%</button>
+            <button class="chip active" onclick="document.getElementById('rec-float-rate').value=13">BRI 13%</button>
+            <button class="chip" onclick="document.getElementById('rec-float-rate').value=14">Pesimis 14%</button>
+          </div>
+          <div class="input-suffix">
+            <input type="number" id="rec-float-rate" value="13" step="0.1">
+            <span class="suffix">%</span>
+          </div>
+        </div>
+        
+        <button class="btn btn-primary smart-plan-btn" onclick="findBestStrategy()">
+          🎯 Cari Strategi Terbaik
+        </button>
+      </div>
+      
+      <div id="recommend-results"></div>
+    </div>
+
+    <!-- SKENARIO A: Status Quo -->
+    <div class="scenario-card" id="scn-A">
+      <div class="scenario-header" onclick="toggleScenario('A')">
+        <div class="scenario-icon A">A</div>
+        <div class="scenario-title">
+          <div class="name">Status Quo (Floating BRI)</div>
+          <div class="desc">Lanjut tanpa intervensi, kena floating rate</div>
+        </div>
+        <button class="btn-reset-scn" onclick="resetScenario('A', event)" title="Reset Skenario A">↻</button>
+        <div class="scenario-chevron">▸</div>
+      </div>
+      <div class="scenario-body">
+        <div class="input-group">
+          <label>Floating Rate Setelah Fixed (%/tahun)</label>
+          <div class="preset-chips">
+            <button class="chip" onclick="setRate('A', 10)">Optimis 10%</button>
+            <button class="chip" onclick="setRate('A', 12)">Realistis 12%</button>
+            <button class="chip active" onclick="setRate('A', 13)">BRI 13%</button>
+            <button class="chip" onclick="setRate('A', 14)">Pesimis 14%</button>
+          </div>
+          <div class="input-suffix">
+            <input type="number" id="A-rate" value="13" step="0.1" min="1" max="20" oninput="calcScenarioA()">
+            <span class="suffix">%</span>
+          </div>
+        </div>
+        <div class="result-box" id="A-result"></div>
+      </div>
+    </div>
+
+    <!-- SKENARIO B: Negosiasi Fixed Extension -->
+    <div class="scenario-card" id="scn-B">
+      <div class="scenario-header" onclick="toggleScenario('B')">
+        <div class="scenario-icon B">B</div>
+        <div class="scenario-title">
+          <div class="name">Negosiasi Perpanjangan Fixed</div>
+          <div class="desc">Minta BRI perpanjang fixed rate dengan rate baru</div>
+        </div>
+        <button class="btn-reset-scn" onclick="resetScenario('B', event)" title="Reset Skenario B">↻</button>
+        <div class="scenario-chevron">▸</div>
+      </div>
+      <div class="scenario-body">
+        <div class="input-row">
+          <div class="input-group">
+            <label>Rate Negosiasi (%)</label>
+            <div class="input-suffix">
+              <input type="number" id="B-rate" value="7" step="0.1" min="1" max="20" oninput="calcScenarioB()">
+              <span class="suffix">%</span>
+            </div>
+          </div>
+          <div class="input-group">
+            <label>Durasi (tahun)</label>
+            <input type="number" id="B-years" value="5" step="1" min="1" max="15" oninput="calcScenarioB()">
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Rate Floating Setelahnya (%)</label>
+          <div class="input-suffix">
+            <input type="number" id="B-float" value="12" step="0.1" min="1" max="20" oninput="calcScenarioB()">
+            <span class="suffix">%</span>
+          </div>
+          <div class="help">Asumsi rate floating setelah masa fixed extension habis</div>
+        </div>
+        <div class="result-box" id="B-result"></div>
+      </div>
+    </div>
+
+    <!-- SKENARIO C: Take-over -->
+    <div class="scenario-card" id="scn-C">
+      <div class="scenario-header" onclick="toggleScenario('C')">
+        <div class="scenario-icon C">C</div>
+        <div class="scenario-title">
+          <div class="name">Pindah KPR (Take-over)</div>
+          <div class="desc">Refinance ke bank lain dengan rate baru</div>
+        </div>
+        <button class="btn-reset-scn" onclick="resetScenario('C', event)" title="Reset Skenario C">↻</button>
+        <div class="scenario-chevron">▸</div>
+      </div>
+      <div class="scenario-body">
+        <div class="input-row">
+          <div class="input-group">
+            <label>Take-over Bulan ke-</label>
+            <input type="number" id="C-month" value="60" step="1" min="1" max="240" oninput="calcScenarioC()">
+            <div class="help">Bulan 60 = saat fixed BRI habis</div>
+          </div>
+          <div class="input-group">
+            <label>Fixed Rate Baru (%)</label>
+            <div class="input-suffix">
+              <input type="number" id="C-rate" value="5.3" step="0.1" min="1" max="20" oninput="calcScenarioC()">
+              <span class="suffix">%</span>
+            </div>
+          </div>
+        </div>
+        <div class="input-row">
+          <div class="input-group">
+            <label>Durasi Fixed Baru (tahun)</label>
+            <input type="number" id="C-years" value="5" step="1" min="1" max="15" oninput="calcScenarioC()">
+          </div>
+          <div class="input-group">
+            <label>Floating Setelah (%)</label>
+            <div class="input-suffix">
+              <input type="number" id="C-float" value="11" step="0.1" min="1" max="20" oninput="calcScenarioC()">
+              <span class="suffix">%</span>
+            </div>
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Total Biaya Switching (Rp)</label>
+          <input type="number" id="C-cost" value="145000000" step="1000000" oninput="calcScenarioC()">
+          <div class="help">Default Rp 145 jt: penalty BRI 10% + provisi + admin + notaris + appraisal</div>
+        </div>
+        <div class="result-box" id="C-result"></div>
+      </div>
+    </div>
+
+    <!-- SKENARIO D: Pelunasan Parsial -->
+    <div class="scenario-card" id="scn-D">
+      <div class="scenario-header" onclick="toggleScenario('D')">
+        <div class="scenario-icon D">D</div>
+        <div class="scenario-title">
+          <div class="name">Pelunasan Parsial</div>
+          <div class="desc">Bayar pokok ekstra di tengah jalan</div>
+        </div>
+        <button class="btn-reset-scn" onclick="resetScenario('D', event)" title="Reset Skenario D">↻</button>
+        <div class="scenario-chevron">▸</div>
+      </div>
+      <div class="scenario-body">
+        <div class="input-group">
+          <label>Mode Pelunasan</label>
+          <select id="D-mode" onchange="calcScenarioD()">
+            <option value="reduce_tenor">Kurangi Tenor (lebih hemat bunga)</option>
+            <option value="reduce_payment">Kurangi Cicilan (cash flow ringan)</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Asumsi Rate Floating Setelah Fixed (%)</label>
+          <div class="input-suffix">
+            <input type="number" id="D-float" value="13" step="0.1" min="1" max="20" oninput="calcScenarioD()">
+            <span class="suffix">%</span>
+          </div>
+        </div>
+        <div class="card-title" style="margin-top:14px">Daftar Pelunasan Parsial</div>
+        <div class="input-row">
+          <div class="input-group">
+            <label>Jumlah (Rp)</label>
+            <input type="number" id="D-amount" value="100000000" step="10000000">
+          </div>
+          <div class="input-group">
+            <label>Bulan ke-</label>
+            <input type="number" id="D-month" value="125" step="1" min="1" max="240">
+          </div>
+        </div>
+        <button class="btn btn-primary btn-small" onclick="addPartialEvent()">+ Tambah Event</button>
+        <div class="event-list" id="D-events"></div>
+        <button class="btn btn-secondary btn-small" id="D-clear-btn" onclick="clearAllPartial()" style="display:none;margin-top:8px">🗑️ Hapus Semua Event</button>
+        <button class="btn btn-success btn-small" id="D-apply-actual-btn" onclick="applyToActual()" style="display:none;margin-top:8px;background:#10b981;color:white;border:none">
+          ✅ Masukan ke Kondisi Aktual (yang sudah dilakukan)
+        </button>
+        <div class="result-box" id="D-result"></div>
+      </div>
+    </div>
+
+    <!-- SKENARIO E: Pelunasan Total -->
+    <div class="scenario-card" id="scn-E">
+      <div class="scenario-header" onclick="toggleScenario('E')">
+        <div class="scenario-icon E">E</div>
+        <div class="scenario-title">
+          <div class="name">Pelunasan Total</div>
+          <div class="desc">Lunas semua sekaligus</div>
+        </div>
+        <button class="btn-reset-scn" onclick="resetScenario('E', event)" title="Reset Skenario E">↻</button>
+        <div class="scenario-chevron">▸</div>
+      </div>
+      <div class="scenario-body">
+        <div class="input-group">
+          <label>Lunas Bulan ke-</label>
+          <input type="number" id="E-month" value="120" step="1" min="1" max="240" oninput="calcScenarioE()">
+          <div class="help">Bulan 120 = April 2032 (penalty 0%). Sebelum itu kena penalty 10%.</div>
+        </div>
+        <div class="input-group">
+          <label>Asumsi Rate Floating jika Diteruskan (%)</label>
+          <div class="input-suffix">
+            <input type="number" id="E-float" value="13" step="0.1" min="1" max="20" oninput="calcScenarioE()">
+            <span class="suffix">%</span>
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Return Investasi Pembanding (% p.a.)</label>
+          <div class="input-suffix">
+            <input type="number" id="E-invest" value="7" step="0.1" min="0" max="30" oninput="calcScenarioE()">
+            <span class="suffix">%</span>
+          </div>
+          <div class="help">Berapa return investasi alternatif net pajak (SBN/deposito/dll)</div>
+        </div>
+        <div class="result-box" id="E-result"></div>
+      </div>
+    </div>
+
+    <!-- SKENARIO HYBRID -->
+    <div class="scenario-card" id="scn-H">
+      <div class="scenario-header" onclick="toggleScenario('H')">
+        <div class="scenario-icon H">⚡</div>
+        <div class="scenario-title">
+          <div class="name">Skenario Hybrid</div>
+          <div class="desc">Kombinasi: negosiasi + parsial + lunas total</div>
+        </div>
+        <button class="btn-reset-scn" onclick="resetScenario('H', event)" title="Reset Skenario Hybrid">↻</button>
+        <div class="scenario-chevron">▸</div>
+      </div>
+      <div class="scenario-body">
+        <div class="card-subtitle">Bangun strategi kombinasi yang realistis</div>
+        <div class="input-group">
+          <label>Step 1: Setelah Fixed Habis</label>
+          <select id="H-step1" onchange="onHybridStep1Change()">
+            <option value="floating">Lanjut Floating BRI</option>
+            <option value="negotiate" selected>Negosiasi Extend Fixed</option>
+            <option value="takeover">Pindah Bank (Take-over)</option>
+          </select>
+        </div>
+        <div id="H-step1-params"></div>
+        <div class="card-title" style="margin-top:14px">Step 2: Pelunasan Parsial (opsional)</div>
+        <div class="input-row">
+          <div class="input-group">
+            <label>Jumlah (Rp)</label>
+            <input type="number" id="H-amount" value="200000000" step="10000000">
+          </div>
+          <div class="input-group">
+            <label>Bulan ke-</label>
+            <input type="number" id="H-month" value="125" step="1" min="1" max="240">
+          </div>
+        </div>
+        <button class="btn btn-primary btn-small" onclick="addHybridEvent()">+ Tambah Pelunasan</button>
+        <div class="event-list" id="H-events"></div>
+        <button class="btn btn-secondary btn-small" id="H-clear-btn" onclick="clearAllHybrid()" style="display:none;margin-top:8px">🗑️ Hapus Semua Event</button>
+        <div class="input-group" style="margin-top:14px">
+          <label>Step 3: Lunas Total Bulan ke-(opsional, 0 = tidak lunas total)</label>
+          <input type="number" id="H-lunas" value="0" step="1" min="0" max="240" oninput="calcScenarioH()">
+        </div>
+        <div class="result-box" id="H-result"></div>
+      </div>
+    </div>
+
+    <!-- COMPARISON -->
+    <div class="card" style="margin-top:20px">
+      <div class="card-title"><span class="icon">⚖️</span>Bandingkan Semua Skenario</div>
+      <div class="card-subtitle">Skenario paling untung di-highlight hijau</div>
+      <div class="compare-scroll">
+        <div class="compare-table" id="compare-table" style="--cols:6"></div>
+      </div>
+      <div class="chart-container"><canvas id="chart-compare"></canvas></div>
+    </div>
+  </section>
+
+  <!-- ============ TAB: SCHEDULE ============ -->
+  <section id="tab-schedule" class="tab-content">
+    <div class="card">
+      <div class="card-title"><span class="icon">📅</span>Jadwal Amortisasi</div>
+      <div class="input-group">
+        <label>Pilih Rentang</label>
+        <select id="sched-range" onchange="renderSchedule()">
+          <option value="12">12 Bulan ke Depan</option>
+          <option value="60" selected>5 Tahun ke Depan</option>
+          <option value="120">10 Tahun ke Depan</option>
+          <option value="all">Semua (240 bulan)</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Skenario</label>
+        <select id="sched-scenario" onchange="renderSchedule()">
+          <option value="actual">Aktual + Proyeksi 13% (BRI)</option>
+          <option value="optimis">Aktual + Proyeksi 10%</option>
+          <option value="realistis">Aktual + Proyeksi 12%</option>
+        </select>
+      </div>
+      <button class="btn btn-secondary btn-small" onclick="exportCSV()">⬇️ Export CSV</button>
+    </div>
+    <div class="card" style="padding:0;overflow-x:auto">
+      <table class="schedule-table" id="schedule-table"></table>
+    </div>
+  </section>
+
+  <!-- ============ TAB: NOTES ============ -->
+  <section id="tab-notes" class="tab-content">
+    <div class="card">
+      <div class="card-title"><span class="icon">📝</span>Catatan Strategi</div>
+      <div class="card-subtitle">Catat hasil ngobrol dengan BRI, rate dari bank lain, target pelunasan, dll. Auto-saved.</div>
+      <textarea class="notes-area" id="notes" placeholder="Contoh:
+- 12 Jun: Telp BRI Buahbatu, CS bilang counter rate Mei 2027 ~12.5%
+- 15 Jun: Cek SPK BCA, fixed 5.3% 5 tahun, take-over OK
+- Target: pelunasan parsial Rp 200 jt saat kontrak offshore Q4 2026
+- Pertanyaan utk BRI: konfirmasi pelunasan parsial bebas penalty
+"></textarea>
+    </div>
+  </section>
+
+  <!-- ============ TAB: SETTINGS ============ -->
+  <section id="tab-settings" class="tab-content">
+    <div class="card">
+      <div class="card-title"><span class="icon">🏠</span>Data KPR</div>
+      <div class="input-group">
+        <label>Nama Bank</label>
+        <input type="text" id="set-bank" value="BRI">
+      </div>
+      <div class="input-row">
+        <div class="input-group">
+          <label>Harga Rumah (Rp)</label>
+          <input type="number" id="set-harga" value="1726850000" step="1000000">
+        </div>
+        <div class="input-group">
+          <label>Down Payment (Rp)</label>
+          <input type="number" id="set-dp" value="500000000" step="1000000">
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Plafond Kredit (Rp)</label>
+        <input type="number" id="set-plafond" value="1226850000" step="1000000">
+      </div>
+      <div class="input-row">
+        <div class="input-group">
+          <label>Tenor (bulan)</label>
+          <input type="number" id="set-tenor" value="240" step="12">
+        </div>
+        <div class="input-group">
+          <label>Tanggal Akad</label>
+          <input type="date" id="set-akad" value="2022-04-12">
+        </div>
+      </div>
+      <div class="input-row">
+        <div class="input-group">
+          <label>Bunga Fixed (%)</label>
+          <div class="input-suffix">
+            <input type="number" id="set-bunga" value="6.49" step="0.01">
+            <span class="suffix">%</span>
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Masa Fixed (bulan)</label>
+          <input type="number" id="set-fixed" value="60" step="12">
+        </div>
+      </div>
+      <div class="input-row">
+        <div class="input-group">
+          <label>Penalty (%)</label>
+          <div class="input-suffix">
+            <input type="number" id="set-penalty" value="10" step="0.5">
+            <span class="suffix">%</span>
+          </div>
+          <div class="help">Penalty pelunasan dipercepat</div>
+        </div>
+        <div class="input-group">
+          <label>Penalty Hilang Bulan ke-</label>
+          <input type="number" id="set-penalty-month" value="120" step="12">
+          <div class="help">10 tahun = 120 bulan</div>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="saveSettings()">💾 Simpan Perubahan</button>
+    </div>
+
+    <!-- PELUNASAN PARSIAL AKTUAL (yang sudah dilakukan) -->
+    <div class="card">
+      <div class="card-title"><span class="icon">🏠</span>Pelunasan Parsial Aktual</div>
+      <div class="context-banner" style="margin-bottom:14px">
+        <strong>Untuk apa?</strong>
+        Catat pelunasan parsial yang <b>SUDAH</b> ZZ lakukan di masa lalu. OS dan proyeksi lunas akan disesuaikan.
+        <br><br>💡 Lebih praktis: input dari tab Simulasi → Skenario D → tombol <b>"Masukan ke Aktual"</b>
+      </div>
+      <div class="input-row">
+        <div class="input-group">
+          <label>Jumlah (Rp)</label>
+          <input type="number" id="actual-amount" value="0" step="1000000">
+        </div>
+        <div class="input-group">
+          <label>Bulan ke-</label>
+          <input type="number" id="actual-month" value="1" min="1">
+          <div class="help">1 = bulan pertama (akad)</div>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Mode yang Bank Terapkan</label>
+        <select id="actual-mode">
+          <option value="reduce_tenor">⚡ Kurangi Tenor (cicilan tetap)</option>
+          <option value="reduce_payment">💧 Kurangi Cicilan (tenor tetap)</option>
+        </select>
+        <div class="help">Pilih sesuai yang ZZ minta saat melunasi ke bank</div>
+      </div>
+      <button class="btn btn-primary" onclick="addActualPartial()">+ Tambah</button>
+      <div id="actual-partials-list" style="margin-top:12px"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">📤</span>Data & Backup</div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="exportData()">📥 Export JSON</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()">📤 Import</button>
+        <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
+      </div>
+      <button class="btn btn-danger" style="margin-top:10px" onclick="resetApp()">🗑️ Reset Aplikasi</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">ℹ️</span>Tentang</div>
+      <div style="font-size:13px;line-height:1.6;color:var(--text-muted)">
+        <p><strong>Kalkulator KPR PWA v1.0</strong></p>
+        <p>Decision support tool untuk analisis KPR berjalan. Data tersimpan di device, tidak dikirim ke server.</p>
+        <p style="margin-top:8px">💡 <strong>Tips:</strong> Install ke Home Screen via Safari Share → "Add to Home Screen" untuk pengalaman seperti app native.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" data-tab="dashboard" onclick="switchTab('dashboard')">
+    <span class="icon">📊</span><span>Posisi</span>
+  </button>
+  <button class="nav-btn" data-tab="simulator" onclick="switchTab('simulator')">
+    <span class="icon">🧮</span><span>Simulasi</span>
+  </button>
+  <button class="nav-btn" data-tab="schedule" onclick="switchTab('schedule')">
+    <span class="icon">📅</span><span>Jadwal</span>
+  </button>
+  <button class="nav-btn" data-tab="notes" onclick="switchTab('notes')">
+    <span class="icon">📝</span><span>Catatan</span>
+  </button>
+  <button class="nav-btn" data-tab="settings" onclick="switchTab('settings')">
+    <span class="icon">⚙️</span><span>Setting</span>
+  </button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+/* ==================== STATE & DEFAULTS ==================== */
+const STORAGE_KEY = 'kpr-app-state';
+const DEFAULT_STATE = {
+  bank: 'BRI',
+  harga: 1726850000,
+  dp: 500000000,
+  plafond: 1226850000,
+  tenor: 240,
+  akad: '2022-04-12',
+  bunga: 6.49,
+  masaFixed: 60,
+  penalty: 10,
+  penaltyMonth: 120,
+  notes: '',
+  partialEvents: [],
+  hybridEvents: [],
+  actualPartials: [],  // Pelunasan parsial yang SUDAH dilakukan (untuk update OS)
+  theme: 'auto'
+};
+
+// Default scenario inputs (untuk reset)
+const SCENARIO_DEFAULTS = {
+  A: { 'A-rate': 13 },
+  B: { 'B-rate': 7, 'B-years': 5, 'B-float': 12 },
+  C: { 'C-month': 60, 'C-rate': 5.3, 'C-years': 5, 'C-float': 11, 'C-cost': 145000000 },
+  D: { 'D-mode': 'reduce_tenor', 'D-float': 13, 'D-amount': 100000000, 'D-month': 125 },
+  E: { 'E-month': 120, 'E-float': 13, 'E-invest': 7 },
+  H: { 'H-step1': 'negotiate', 'H-amount': 200000000, 'H-month': 125, 'H-lunas': 0 }
+};
+
+const SCENARIO_NAMES = {
+  A: 'Status Quo', B: 'Negosiasi', C: 'Take-over',
+  D: 'Pelunasan Parsial', E: 'Pelunasan Total', H: 'Hybrid'
+};
+
+let state = loadState();
+let charts = {};
+let _initialSnapshot = null;  // captured at startup for "Batal Semua"
+let _inUpdate = false;         // prevent recursive updateCompareTable
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return { ...DEFAULT_STATE, ...JSON.parse(raw) };
+  } catch(e) { console.warn('Load state fail', e); }
+  return { ...DEFAULT_STATE };
+}
+
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+  catch(e) { console.warn('Save state fail', e); }
+}
+
+/* ==================== UNDO/RESET SYSTEM ==================== */
+
+// Capture current state of all scenario inputs + events
+function captureSnapshot() {
+  const snap = { inputs: {}, partialEvents: [...state.partialEvents], hybridEvents: [...state.hybridEvents] };
+  ['A','B','C','D','E','H'].forEach(id => {
+    snap.inputs[id] = {};
+    Object.keys(SCENARIO_DEFAULTS[id]).forEach(key => {
+      const el = document.getElementById(key);
+      if (el) snap.inputs[id][key] = el.value;
+    });
+    // Hybrid step1 dynamic inputs
+    if (id === 'H') {
+      ['H-float-rate','H-nego-rate','H-nego-years','H-nego-float','H-tk-rate','H-tk-years','H-tk-float','H-tk-cost'].forEach(key => {
+        const el = document.getElementById(key);
+        if (el) snap.inputs[id][key] = el.value;
+      });
+    }
+  });
+  return snap;
+}
+
+// Restore snapshot
+function restoreSnapshot(snap) {
+  if (!snap) return;
+  Object.keys(snap.inputs).forEach(id => {
+    Object.keys(snap.inputs[id]).forEach(key => {
+      const el = document.getElementById(key);
+      if (el) el.value = snap.inputs[id][key];
+    });
+  });
+  state.partialEvents = [...(snap.partialEvents || [])];
+  state.hybridEvents = [...(snap.hybridEvents || [])];
+  saveState();
+  renderPartialEvents();
+  renderHybridEvents();
+  renderHybridStep1Params();
+  updateCompareTable();
+}
+
+// Reset 1 scenario to default values
+function resetScenario(id, event) {
+  if (event) event.stopPropagation(); // prevent expanding/collapsing
+  if (!confirm('Reset Skenario ' + id + ' (' + SCENARIO_NAMES[id] + ') ke nilai default?')) return;
+  Object.keys(SCENARIO_DEFAULTS[id]).forEach(key => {
+    const el = document.getElementById(key);
+    if (el) el.value = SCENARIO_DEFAULTS[id][key];
+  });
+  if (id === 'D') { state.partialEvents = []; saveState(); renderPartialEvents(); }
+  if (id === 'H') {
+    state.hybridEvents = []; saveState(); renderHybridEvents();
+    renderHybridStep1Params();
+  }
+  updateCompareTable();
+  showToast('✓ Skenario ' + id + ' direset');
+}
+
+// Reset all scenarios to defaults
+function resetAllScenarios() {
+  if (!confirm('Reset SEMUA skenario simulasi ke nilai default?\n\nIni akan hapus semua event pelunasan parsial dan hybrid.')) return;
+  ['A','B','C','D','E','H'].forEach(id => {
+    Object.keys(SCENARIO_DEFAULTS[id]).forEach(key => {
+      const el = document.getElementById(key);
+      if (el) el.value = SCENARIO_DEFAULTS[id][key];
+    });
+  });
+  state.partialEvents = [];
+  state.hybridEvents = [];
+  saveState();
+  renderPartialEvents();
+  renderHybridEvents();
+  renderHybridStep1Params();
+  updateCompareTable();
+  showToast('✓ Semua skenario direset');
+}
+
+// Restore to initial snapshot (when app first opened)
+function restoreToInitial() {
+  if (!_initialSnapshot) { showToast('⚠️ Tidak ada snapshot awal'); return; }
+  if (!confirm('Kembalikan SEMUA perubahan ke kondisi awal saat app dibuka?\n\nSemua input + event akan dikembalikan ke nilai sebelum perubahan.')) return;
+  restoreSnapshot(_initialSnapshot);
+  showToast('✓ Dikembalikan ke kondisi awal');
+}
+
+// Clear all partial events with confirm
+function clearAllPartial() {
+  if (state.partialEvents.length === 0) { showToast('⚠️ Tidak ada event'); return; }
+  if (!confirm('Hapus semua ' + state.partialEvents.length + ' event pelunasan parsial?')) return;
+  state.partialEvents = [];
+  saveState();
+  renderPartialEvents();
+  calcScenarioD();
+  updateCompareTable();
+  showToast('✓ Semua event dihapus');
+}
+
+function clearAllHybrid() {
+  if (state.hybridEvents.length === 0) { showToast('⚠️ Tidak ada event'); return; }
+  if (!confirm('Hapus semua ' + state.hybridEvents.length + ' event hybrid?')) return;
+  state.hybridEvents = [];
+  saveState();
+  renderHybridEvents();
+  calcScenarioH();
+  updateCompareTable();
+  showToast('✓ Semua event dihapus');
+}
+
+/* ==================== SMART RECOMMENDER ==================== */
+
+// Forward-only simulator: simulate dari current month sampai lunas
+function simulateForward(opts) {
+  opts = opts || {};
+  const floatRate = opts.floatRate || 13;
+  const partialEvents = opts.partialEvents || [];
+  const lunasMonth = opts.lunasMonth || null;
+  const partialMode = opts.partialMode || 'reduce_tenor';
+  
+  const k = currentMonth();
+  const M_orig_fixed = calcAngsuran(state.plafond, state.bunga, state.tenor);
+  let os = calcCurrentOS();  // Pakai OS aktual (factor in past actual partials)
+  let M = M_orig_fixed;
+  
+  // BASELINE M_floating: hitung M floating yang AKAN BERLAKU tanpa ada parsial baru
+  // Used for Mode A — partials reduce OS, but M stays at this value, so lunas faster
+  let osBaseline = os;
+  for (let m = k + 1; m <= state.masaFixed && m <= state.tenor; m++) {
+    const r = state.bunga / 100 / 12;
+    const bunga_b = osBaseline * r;
+    const pokok_b = Math.min(M_orig_fixed - bunga_b, osBaseline);
+    osBaseline -= pokok_b;
+    if (osBaseline <= 0.01) break;
+  }
+  const M_floating_orig = osBaseline > 0 
+    ? calcAngsuran(osBaseline, floatRate, state.tenor - state.masaFixed)
+    : 0;
+  
+  let totalCicilan = 0, totalBunga = 0, totalPokok = 0;
+  let totalPartial = 0, totalPenalty = 0, lunasAmt = 0;
+  let actualLunasMonth = state.tenor;
+  let maxMonthlyOutflow = M;
+  let M_floating_used = null;
+  const cicilanEvolution = []; // {afterMonth, newM, rate, reason}
+  
+  for (let month = k + 1; month <= state.tenor; month++) {
+    if (month === state.masaFixed + 1) {
+      if (partialMode === 'reduce_tenor') {
+        // Mode A: use ORIGINAL M_floating regardless of partial impact
+        M = M_floating_orig;
+      } else {
+        // Mode B: recalc based on actual OS (smaller because of partial)
+        M = calcAngsuran(os, floatRate, state.tenor - month + 1);
+      }
+      M_floating_used = M;
+      cicilanEvolution.push({ afterMonth: month - 1, newM: M, rate: floatRate, reason: 'Mulai floating' });
+    }
+    
+    const rPct = month <= state.masaFixed ? state.bunga : floatRate;
+    const r_monthly = rPct / 100 / 12;
+    
+    const bunga = os * r_monthly;
+    let pokok = M - bunga;
+    if (pokok > os) pokok = os;
+    os -= pokok;
+    totalCicilan += bunga + pokok;
+    totalBunga += bunga;
+    totalPokok += pokok;
+    let monthOutflow = bunga + pokok;
+    
+    for (const ev of partialEvents) {
+      if (ev.month === month && os > 0) {
+        const partial = Math.min(ev.amount, os);
+        let evPenalty = 0;
+        if (month < state.penaltyMonth) {
+          evPenalty = partial * state.penalty / 100;
+          totalPenalty += evPenalty;
+        }
+        os -= partial;
+        totalPartial += partial;
+        monthOutflow += partial + evPenalty;
+        
+        // Only Mode B recalcs M after partial
+        if (partialMode === 'reduce_payment' && os > 0) {
+          const remainingMonths = state.tenor - month;
+          if (remainingMonths > 0) {
+            M = calcAngsuran(os, rPct, remainingMonths);
+            cicilanEvolution.push({ afterMonth: month, newM: M, rate: rPct, reason: `Setelah parsial Rp ${(partial/1e6).toFixed(0)}jt`, partial });
+          }
+        }
+        // Mode A: M stays — OS hits 0 sooner = lunas faster
+      }
+    }
+    
+    if (lunasMonth && month === lunasMonth && os > 0) {
+      let lunasPenalty = 0;
+      if (month < state.penaltyMonth) {
+        lunasPenalty = os * state.penalty / 100;
+        totalPenalty += lunasPenalty;
+      }
+      lunasAmt = os;
+      monthOutflow += os + lunasPenalty;
+      os = 0;
+      actualLunasMonth = month;
+      maxMonthlyOutflow = Math.max(maxMonthlyOutflow, monthOutflow);
+      break;
+    }
+    
+    maxMonthlyOutflow = Math.max(maxMonthlyOutflow, monthOutflow);
+    
+    if (os <= 0.01) {
+      actualLunasMonth = month;
+      break;
+    }
+  }
+  
+  const monthsFasterVsBaseline = state.tenor - actualLunasMonth;
+  
+  return {
+    totalCashOut: totalCicilan + totalPartial + totalPenalty + lunasAmt,
+    totalCicilan, totalBunga, totalPartial, totalPenalty, lunasAmt,
+    lunasMonth: actualLunasMonth,
+    maxMonthlyOutflow,
+    monthsToLunas: actualLunasMonth - k,
+    initialM: M_orig_fixed,
+    floatingMOriginal: M_floating_orig,
+    floatingMUsed: M_floating_used,
+    finalM: M,
+    cicilanEvolution,
+    monthsFasterVsBaseline,
+    partialMode
+  };
+}
+
+// Generate dan rank strategies
+function findBestStrategy() {
+  const cashNow = parseFloat(document.getElementById('rec-cash-now').value) || 0;
+  const cash6mo = parseFloat(document.getElementById('rec-cash-6mo').value) || 0;
+  const priority = document.getElementById('rec-priority').value;
+  const floatRate = parseFloat(document.getElementById('rec-float-rate').value) || 13;
+  const partialMode = document.getElementById('rec-mode')?.value || 'reduce_tenor';
+  
+  const k = currentMonth();
+  const M_orig = calcAngsuran(state.plafond, state.bunga, state.tenor);
+  const osNow = calcOS(state.plafond, M_orig, state.bunga, k);
+  
+  // Estimate cash flow capacity: total cash available over time
+  function estimateCashAt(month) {
+    const monthsFromNow = month - k;
+    return cashNow + cash6mo * (monthsFromNow / 6);
+  }
+  
+  // Baseline (no mode needed - no partials)
+  const baseline = simulateForward({ floatRate });
+  baseline.type = 'baseline';
+  baseline.label = 'Status Quo (lanjut floating)';
+  baseline.affordable = true;
+  baseline.params = {};
+  
+  const strategies = [baseline];
+  
+  // ==== A. LUNAS TOTAL at various months ====
+  const lunasMonthsCandidates = new Set([
+    k + 1,
+    k + 6, k + 12,
+    state.masaFixed,
+    state.masaFixed - 1,
+    Math.floor((k + state.penaltyMonth) / 2),
+    state.penaltyMonth - 1,
+    state.penaltyMonth,
+    state.penaltyMonth + 1,
+    state.penaltyMonth + 12,
+    150, 180
+  ]);
+  
+  for (const m of lunasMonthsCandidates) {
+    if (m <= k || m >= state.tenor) continue;
+    const sim = simulateForward({ lunasMonth: m, floatRate });
+    sim.type = 'lunas_total';
+    sim.label = `Lunas total bulan ${m}`;
+    sim.params = { lunasMonth: m };
+    sim.peakCash = sim.lunasAmt + (m < state.penaltyMonth ? sim.lunasAmt * state.penalty / 100 : 0);
+    sim.affordable = estimateCashAt(m) >= sim.peakCash;
+    strategies.push(sim);
+  }
+  
+  // ==== B. RECURRING PARTIALS (with chosen mode) ====
+  const startMonths = [k + 1, state.masaFixed + 1, state.penaltyMonth];
+  const intervals = [3, 6, 12];
+  const amounts = [50e6, 100e6, 200e6, 300e6, 500e6];
+  
+  for (const start of startMonths) {
+    if (start > state.tenor) continue;
+    for (const interval of intervals) {
+      for (const amount of amounts) {
+        const requiredPerSixMonth = amount * (6 / interval);
+        if (requiredPerSixMonth > cash6mo * 1.2) continue;
+        
+        const events = [];
+        for (let m = start; m <= state.tenor; m += interval) {
+          events.push({ month: m, amount });
+        }
+        if (events.length === 0) continue;
+        
+        const sim = simulateForward({ partialEvents: events, floatRate, partialMode });
+        sim.type = 'recurring';
+        sim.label = `Rp ${(amount/1e6).toFixed(0)}jt setiap ${interval} bulan ${start === k + 1 ? 'mulai sekarang' : 'mulai bulan ' + start}`;
+        sim.params = { partialEvents: events, partialMode };
+        sim.peakCash = amount;
+        sim.affordable = true;
+        strategies.push(sim);
+      }
+    }
+  }
+  
+  // ==== C. COMBINATION ====
+  for (const partialAmount of [100e6, 200e6, 300e6]) {
+    const requiredPerSixMonth = partialAmount;
+    if (requiredPerSixMonth > cash6mo * 1.2) continue;
+    
+    for (const lunasMonth of [state.masaFixed, state.penaltyMonth, state.penaltyMonth + 1]) {
+      if (lunasMonth <= k) continue;
+      const events = [];
+      for (let m = k + 6; m < lunasMonth; m += 6) {
+        events.push({ month: m, amount: partialAmount });
+      }
+      
+      const sim = simulateForward({ partialEvents: events, lunasMonth, floatRate, partialMode });
+      sim.type = 'combo';
+      sim.label = sim.lunasMonth < lunasMonth
+        ? `${(partialAmount/1e6).toFixed(0)}jt/6bln (lunas otomatis bulan ${sim.lunasMonth})`
+        : `${(partialAmount/1e6).toFixed(0)}jt/6bln + lunas total bulan ${lunasMonth}`;
+      sim.params = { partialEvents: events, lunasMonth, partialMode };
+      sim.peakCash = sim.lunasAmt + sim.totalPenalty;
+      sim.affordable = estimateCashAt(lunasMonth) >= sim.peakCash + events.reduce((s, e) => s + e.amount, 0);
+      strategies.push(sim);
+    }
+  }
+  
+  // ==== D. SINGLE BIG PARTIAL NOW ====
+  if (cashNow > 100e6) {
+    const seenAmounts = new Set();
+    for (const fraction of [0.3, 0.5, 0.7, 0.9]) {
+      const amount = Math.round(Math.min(cashNow * fraction, osNow * 0.95) / 1e7) * 1e7;
+      if (seenAmounts.has(amount) || amount < 50e6) continue;
+      seenAmounts.add(amount);
+      const sim = simulateForward({ partialEvents: [{ month: k + 1, amount }], floatRate, partialMode });
+      sim.type = 'big_partial';
+      sim.label = `Pelunasan parsial Rp ${(amount/1e6).toFixed(0)}jt sekarang`;
+      sim.params = { partialEvents: [{ month: k + 1, amount }], partialMode };
+      sim.peakCash = amount;
+      sim.affordable = cashNow >= amount;
+      strategies.push(sim);
+    }
+  }
+  
+  // Filter affordable + remove near-baseline (saving < Rp 30 jt) + dedupe by label
+  const seenLabels = new Set();
+  let pool = strategies.filter(s => {
+    if (s.type === 'baseline') return false;
+    if (seenLabels.has(s.label)) return false;
+    seenLabels.add(s.label);
+    const saving = baseline.totalCashOut - s.totalCashOut;
+    if (saving < 30e6) return false;
+    return s.affordable;
+  });
+  if (pool.length < 3) {
+    seenLabels.clear();
+    pool = strategies.filter(s => {
+      if (s.type === 'baseline') return false;
+      if (seenLabels.has(s.label)) return false;
+      seenLabels.add(s.label);
+      const saving = baseline.totalCashOut - s.totalCashOut;
+      return saving >= 30e6;
+    });
+  }
+  
+  // Sort by priority
+  pool.sort((a, b) => {
+    if (priority === 'min_cash') return a.totalCashOut - b.totalCashOut;
+    if (priority === 'fast_lunas') {
+      if (a.lunasMonth !== b.lunasMonth) return a.lunasMonth - b.lunasMonth;
+      return a.totalCashOut - b.totalCashOut;
+    }
+    if (priority === 'no_penalty') {
+      if (a.totalPenalty !== b.totalPenalty) return a.totalPenalty - b.totalPenalty;
+      return a.totalCashOut - b.totalCashOut;
+    }
+    if (priority === 'cash_flow') {
+      if (a.maxMonthlyOutflow !== b.maxMonthlyOutflow) return a.maxMonthlyOutflow - b.maxMonthlyOutflow;
+      return a.totalCashOut - b.totalCashOut;
+    }
+    return a.totalCashOut - b.totalCashOut;
+  });
+  
+  // Top 5 with diversity preference
+  const top = [];
+  const seenTypes = new Set();
+  // First pass: best of each type
+  for (const s of pool) {
+    if (seenTypes.has(s.type)) continue;
+    if (s.type === 'baseline') continue;  // skip baseline as recommendation
+    seenTypes.add(s.type);
+    top.push(s);
+    if (top.length >= 4) break;
+  }
+  // Second pass: fill remaining slots
+  for (const s of pool) {
+    if (top.length >= 5) break;
+    if (top.includes(s)) continue;
+    if (s.type === 'baseline') continue;
+    top.push(s);
+  }
+  
+  renderRecommendations(top, baseline);
+}
+
+function renderRecommendations(top, baseline) {
+  const container = document.getElementById('recommend-results');
+  const k = currentMonth();
+  const akad = new Date(state.akad);
+  
+  const medals = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣'];
+  
+  let html = `
+    <div class="recommend-baseline">
+      <div class="rb-label">📊 Baseline (Status Quo)</div>
+      <div class="rb-detail">Total cash out: <strong>${fmtRp(baseline.totalCashOut, true)}</strong> • Lunas: ${fmtMonth(addMonths(akad, baseline.lunasMonth))}</div>
+    </div>
+    <div class="recommend-header-text">🎯 Top ${top.length} Strategi Terbaik:</div>
+  `;
+  
+  top.forEach((s, i) => {
+    const saving = baseline.totalCashOut - s.totalCashOut;
+    const lunasDate = addMonths(akad, s.lunasMonth);
+    const verdict = saving > 800e6 ? 'good' : saving > 300e6 ? 'good' : 'warn';
+    
+    // NEW: build cicilan/lunas info section based on type + mode
+    let modeInfoHTML = '';
+    if (s.type === 'lunas_total') {
+      modeInfoHTML = `<div class="rec-mode-info">💥 Lunas sekaligus, tidak ada cicilan lagi setelah bulan ${s.lunasMonth}</div>`;
+    } else if (s.type === 'recurring' || s.type === 'big_partial' || s.type === 'combo') {
+      const isModeB = s.params && s.params.partialMode === 'reduce_payment';
+      if (isModeB && s.cicilanEvolution && s.cicilanEvolution.length > 0) {
+        // Mode B: show first 1-2 changes (most representative)
+        const initialM = s.initialM;
+        const partialChanges = s.cicilanEvolution.filter(c => c.partial); // only partial-induced changes
+        const firstChange = partialChanges[0];
+        const lastChange = partialChanges[partialChanges.length-1];
+        let evoStr = '';
+        if (partialChanges.length === 1) {
+          evoStr = `Cicilan ${fmtRp(initialM, true)} → <b>${fmtRp(firstChange.newM, true)}</b>`;
+        } else {
+          evoStr = `Cicilan ${fmtRp(initialM, true)} → <b>${fmtRp(firstChange.newM, true)}</b> setelah parsial 1, lalu turun bertahap`;
+        }
+        modeInfoHTML = `<div class="rec-mode-info">💧 <b>Mode B</b>: ${evoStr}<br><small>Tenor tetap, total ${partialChanges.length} parsial menurunkan cicilan</small></div>`;
+      } else {
+        // Mode A: show months faster
+        const monthsFaster = s.monthsFasterVsBaseline || 0;
+        if (monthsFaster > 0) {
+          const yrs = Math.floor(monthsFaster/12);
+          const mos = monthsFaster % 12;
+          const fasterStr = yrs > 0 ? `${yrs} th ${mos} bln` : `${mos} bln`;
+          modeInfoHTML = `<div class="rec-mode-info">⚡ <b>Mode A</b>: Cicilan tetap ${fmtRp(s.initialM, true)}, <b>lunas ${fasterStr} lebih cepat</b><br><small>Sebelumnya Apr 2042 → sekarang ${fmtMonth(lunasDate)}</small></div>`;
+        }
+      }
+    }
+    
+    html += `
+      <div class="recommend-item ${verdict}">
+        <div class="recommend-rank">${medals[i]}</div>
+        <div class="recommend-body">
+          <div class="recommend-label">${s.label}</div>
+          <div class="recommend-stats">
+            <div class="rec-stat">
+              <span class="rec-stat-label">Hemat</span>
+              <span class="rec-stat-val good">${fmtRp(saving, true)}</span>
+            </div>
+            <div class="rec-stat">
+              <span class="rec-stat-label">Cash out</span>
+              <span class="rec-stat-val">${fmtRp(s.totalCashOut, true)}</span>
+            </div>
+            <div class="rec-stat">
+              <span class="rec-stat-label">Penalty</span>
+              <span class="rec-stat-val ${s.totalPenalty > 50e6 ? 'bad' : 'warn'}">${fmtRp(s.totalPenalty, true)}</span>
+            </div>
+            <div class="rec-stat">
+              <span class="rec-stat-label">Lunas</span>
+              <span class="rec-stat-val">${fmtMonth(lunasDate)}</span>
+            </div>
+          </div>
+          ${modeInfoHTML}
+          <div class="recommend-extra">
+            ${!s.affordable ? '<span class="badge red">⚠️ Cash mungkin kurang</span>' : ''}
+            <span class="badge ${s.totalPenalty === 0 ? 'green' : 'yellow'}">${s.totalPenalty === 0 ? 'Zero Penalty' : 'Ada Penalty'}</span>
+            <span class="badge blue">${s.monthsToLunas} bln lagi</span>
+          </div>
+          <button class="btn btn-ghost btn-small" onclick='applyStrategy(${JSON.stringify(s.params)}, "${s.type}")'>📥 Terapkan ke Simulator</button>
+        </div>
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+  
+  // Scroll to results
+  setTimeout(() => container.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+}
+
+function applyStrategy(params, type) {
+  // Apply strategy to the appropriate scenario
+  if (type === 'lunas_total') {
+    document.getElementById('E-month').value = params.lunasMonth;
+    document.getElementById('scn-E').classList.add('open');
+    calcScenarioE();
+    showToast('✓ Diterapkan ke Skenario E');
+    document.getElementById('scn-E').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else if (type === 'recurring' || type === 'big_partial') {
+    state.partialEvents = params.partialEvents.map(e => ({ month: e.month, amount: e.amount }));
+    // Set mode in scenario D
+    if (params.partialMode) {
+      document.getElementById('D-mode').value = params.partialMode;
+    }
+    saveState();
+    renderPartialEvents();
+    document.getElementById('scn-D').classList.add('open');
+    calcScenarioD();
+    showToast('✓ Diterapkan ke Skenario D');
+    document.getElementById('scn-D').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else if (type === 'combo') {
+    state.hybridEvents = params.partialEvents.map(e => ({ month: e.month, amount: e.amount }));
+    document.getElementById('H-lunas').value = params.lunasMonth || 0;
+    document.getElementById('H-step1').value = 'floating';
+    saveState();
+    renderHybridEvents();
+    renderHybridStep1Params();
+    document.getElementById('scn-H').classList.add('open');
+    calcScenarioH();
+    showToast('✓ Diterapkan ke Skenario Hybrid');
+    document.getElementById('scn-H').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+/* ==================== UTILS ==================== */
+function fmtRp(n, short = false) {
+  if (n === null || n === undefined || isNaN(n)) return 'Rp 0';
+  const abs = Math.abs(n);
+  const sign = n < 0 ? '-' : '';
+  if (short) {
+    // Indonesian format: comma for decimal, no thousands needed for short
+    if (abs >= 1e9) return sign + 'Rp ' + (abs/1e9).toFixed(2).replace('.', ',') + ' M';
+    if (abs >= 1e6) return sign + 'Rp ' + (abs/1e6).toFixed(1).replace('.', ',') + ' jt';
+    if (abs >= 1e3) return sign + 'Rp ' + Math.round(abs/1e3).toLocaleString('id-ID') + ' rb';
+  }
+  // Full format: Indonesian locale uses dots as thousands separator
+  return sign + 'Rp ' + Math.round(abs).toLocaleString('id-ID');
+}
+
+function fmtPct(n, dec = 1) { return (n).toFixed(dec) + '%'; }
+
+function fmtDate(d) {
+  const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+}
+
+function fmtMonth(d) {
+  const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  return months[d.getMonth()] + ' ' + d.getFullYear();
+}
+
+function addMonths(date, n) {
+  const d = new Date(date);
+  d.setMonth(d.getMonth() + n);
+  return d;
+}
+
+function monthsBetween(d1, d2) {
+  return (d2.getFullYear() - d1.getFullYear()) * 12 + (d2.getMonth() - d1.getMonth());
+}
+
+function currentMonth() {
+  const akad = new Date(state.akad);
+  const now = new Date();
+  return Math.max(0, Math.min(state.tenor, monthsBetween(akad, now)));
+}
+
+// Single source of truth: simulasi dari akad sampai current month dengan actualPartials + mode
+// Returns: os, currentM, totalCicilan, totalBunga, totalPokok, totalPartial, totalPenalty
+function calcCurrentState() {
+  const k = currentMonth();
+  const M_orig_fixed = calcAngsuran(state.plafond, state.bunga, state.tenor);
+  const pastPartials = (state.actualPartials || [])
+    .filter(p => p.month <= k)
+    .sort((a, b) => a.month - b.month);
+  
+  let os = state.plafond;
+  let M = M_orig_fixed;
+  let totalCicilan = 0, totalBunga = 0, totalPokok = 0;
+  let totalPartial = 0, totalPenalty = 0;
+  
+  for (let month = 1; month <= k; month++) {
+    const inFixed = month <= state.masaFixed;
+    // For past floating: assume 13% (BRI counter rate). Could be improved with history.
+    const r_pct = inFixed ? state.bunga : 13;
+    const r = r_pct / 100 / 12;
+    
+    // Floating transition: recalc M (in real bank, M auto-recalcs at transition)
+    if (month === state.masaFixed + 1) {
+      // Check if any past partial was Mode A — if so, preserve original M_floating
+      const hasModeAPast = pastPartials.some(p => p.month <= state.masaFixed && (p.mode || 'reduce_tenor') === 'reduce_tenor');
+      const hasModeBPast = pastPartials.some(p => p.month <= state.masaFixed && p.mode === 'reduce_payment');
+      
+      if (hasModeAPast && !hasModeBPast) {
+        // Mode A only: preserve baseline M_floating
+        const baselineOS = calcOS(state.plafond, M_orig_fixed, state.bunga, state.masaFixed);
+        M = calcAngsuran(baselineOS, r_pct, state.tenor - state.masaFixed);
+      } else {
+        // Mode B or mixed: recalc based on actual OS
+        M = calcAngsuran(os, r_pct, state.tenor - month + 1);
+      }
+    }
+    
+    const bunga = os * r;
+    const pokok = Math.min(M - bunga, os);
+    os -= pokok;
+    totalCicilan += bunga + pokok;
+    totalBunga += bunga;
+    totalPokok += pokok;
+    
+    // Apply actual partial at this month
+    for (const p of pastPartials) {
+      if (p.month === month && os > 0) {
+        const partial = Math.min(p.amount, os);
+        os -= partial;
+        totalPartial += partial;
+        if (month < state.penaltyMonth) {
+          totalPenalty += partial * state.penalty / 100;
+        }
+        // Mode B: recalc M for remaining tenor
+        const mode = p.mode || 'reduce_tenor';
+        if (mode === 'reduce_payment' && os > 0) {
+          M = calcAngsuran(os, r_pct, state.tenor - month);
+        }
+        // Mode A: M stays (no recalc)
+      }
+    }
+    
+    if (os <= 0.01) break;
+  }
+  
+  return { 
+    os, currentM: M, 
+    totalCicilan, totalBunga, totalPokok, 
+    totalPartial, totalPenalty,
+    totalAll: totalCicilan + totalPartial + totalPenalty,
+    k 
+  };
+}
+
+// Project the lunas date considering actual partials + current state
+function projectLunas(floatRate) {
+  floatRate = floatRate || 13;
+  const k = currentMonth();
+  const M_orig_fixed = calcAngsuran(state.plafond, state.bunga, state.tenor);
+  const pastPartials = (state.actualPartials || []).sort((a, b) => a.month - b.month);
+  
+  // Pre-compute baseline M_floating (as if no partials)
+  const baselineOS_at_60 = calcOS(state.plafond, M_orig_fixed, state.bunga, state.masaFixed);
+  const M_floating_baseline = calcAngsuran(baselineOS_at_60, floatRate, state.tenor - state.masaFixed);
+  
+  let os = state.plafond;
+  let M = M_orig_fixed;
+  
+  for (let month = 1; month <= state.tenor; month++) {
+    if (month === state.masaFixed + 1) {
+      // Check past partials' mode dominance
+      const pastPartialsBeforeFloat = pastPartials.filter(p => p.month <= state.masaFixed);
+      const hasModeB = pastPartialsBeforeFloat.some(p => p.mode === 'reduce_payment');
+      const hasModeA = pastPartialsBeforeFloat.some(p => (p.mode || 'reduce_tenor') === 'reduce_tenor');
+      
+      if (hasModeA && !hasModeB) {
+        M = M_floating_baseline;
+      } else {
+        M = calcAngsuran(os, floatRate, state.tenor - month + 1);
+      }
+    }
+    
+    const inFixed = month <= state.masaFixed;
+    const r_pct = inFixed ? state.bunga : floatRate;
+    const r = r_pct / 100 / 12;
+    
+    const bunga = os * r;
+    const pokok = Math.min(M - bunga, os);
+    os -= pokok;
+    
+    for (const p of pastPartials) {
+      if (p.month === month && os > 0) {
+        const partial = Math.min(p.amount, os);
+        os -= partial;
+        const mode = p.mode || 'reduce_tenor';
+        if (mode === 'reduce_payment' && os > 0) {
+          M = calcAngsuran(os, r_pct, state.tenor - month);
+        }
+      }
+    }
+    
+    if (os <= 0.01) {
+      return { month, date: addMonths(new Date(state.akad), month) };
+    }
+  }
+  return { month: state.tenor, date: addMonths(new Date(state.akad), state.tenor) };
+}
+
+// Backward-compat wrappers
+function calcCurrentOS() { return calcCurrentState().os; }
+function calcTotalPaidPast() { 
+  const s = calcCurrentState();
+  return { 
+    totalCicilan: s.totalCicilan, 
+    totalPartial: s.totalPartial, 
+    totalPenalty: s.totalPenalty, 
+    totalAll: s.totalAll 
+  };
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+/* ==================== CALCULATION ENGINE ==================== */
+
+// Cicilan anuitas
+function calcAngsuran(P, ratePct, n) {
+  const r = ratePct / 100 / 12;
+  if (r === 0) return P / n;
+  return P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+}
+
+// Outstanding setelah k cicilan
+function calcOS(P, M, ratePct, k) {
+  const r = ratePct / 100 / 12;
+  if (r === 0) return Math.max(0, P - M * k);
+  return Math.max(0, P * Math.pow(1 + r, k) - M * (Math.pow(1 + r, k) - 1) / r);
+}
+
+// Build schedule untuk skenario multi-phase
+// phases: array of {fromMonth, toMonth, ratePct, partialPayment, lunasTotal}
+function buildSchedule(plafond, akadDate, tenor, phases) {
+  const schedule = [];
+  let os = plafond;
+  let currentRate = phases[0].ratePct;
+  let M = calcAngsuran(plafond, currentRate, tenor);
+  let remainingMonths = tenor;
+  
+  for (let month = 1; month <= tenor; month++) {
+    const date = addMonths(akadDate, month);
+    
+    // Find active phase
+    const phase = phases.find(p => month >= p.fromMonth && month <= p.toMonth);
+    if (phase && phase.ratePct !== currentRate) {
+      currentRate = phase.ratePct;
+      remainingMonths = tenor - month + 1;
+      M = calcAngsuran(os, currentRate, remainingMonths);
+    }
+    
+    const r = currentRate / 100 / 12;
+    const bunga = os * r;
+    let pokok = M - bunga;
+    
+    if (pokok > os) pokok = os;
+    let cicilan = bunga + pokok;
+    
+    // Partial payment?
+    let partial = 0;
+    if (phase && phase.partialPayment && phase.partialMonth === month) {
+      partial = Math.min(phase.partialPayment, os - pokok);
+      // Recalculate M based on mode
+      const newOS = os - pokok - partial;
+      if (phase.partialMode === 'reduce_tenor' && newOS > 0) {
+        // Keep M, tenor shortens naturally
+      } else if (phase.partialMode === 'reduce_payment' && newOS > 0) {
+        remainingMonths = tenor - month;
+        M = calcAngsuran(newOS, currentRate, remainingMonths);
+      }
+    }
+    
+    // Lunas total?
+    let lunasTotal = 0, penalty = 0;
+    if (phase && phase.lunasTotal === month) {
+      lunasTotal = os - pokok;
+      if (month < state.penaltyMonth) {
+        penalty = lunasTotal * state.penalty / 100;
+      }
+    }
+    
+    os = os - pokok - partial - lunasTotal;
+    
+    schedule.push({
+      month, date, cicilan, pokok, bunga, partial, lunasTotal, penalty, os,
+      rate: currentRate
+    });
+    
+    if (os <= 0.01) break;
+  }
+  
+  return schedule;
+}
+
+// Calculate totals from schedule
+function totalsFromSchedule(schedule) {
+  let totalBayar = 0, totalPokok = 0, totalBunga = 0, totalPartial = 0, totalPenalty = 0, lunasTotal = 0;
+  schedule.forEach(s => {
+    totalBayar += s.cicilan;
+    totalPokok += s.pokok;
+    totalBunga += s.bunga;
+    totalPartial += s.partial;
+    totalPenalty += s.penalty;
+    lunasTotal += s.lunasTotal;
+  });
+  return {
+    totalBayar, totalPokok, totalBunga, totalPartial, totalPenalty, lunasTotal,
+    totalCashOut: totalBayar + totalPartial + totalPenalty + lunasTotal,
+    lunasMonth: schedule.length,
+    lunasDate: schedule[schedule.length - 1].date
+  };
+}
+
+/* ==================== TAB SWITCHING ==================== */
+function switchTab(name) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  document.querySelector('.nav-btn[data-tab="' + name + '"]').classList.add('active');
+  window.scrollTo(0, 0);
+  if (name === 'schedule') renderSchedule();
+  if (name === 'settings') renderActualPartials();
+}
+
+function toggleScenario(id) {
+  document.getElementById('scn-' + id).classList.toggle('open');
+}
+
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  state.theme = next;
+  saveState();
+  redrawAllCharts();
+}
+
+/* ==================== DASHBOARD ==================== */
+function renderDashboard() {
+  const P = state.plafond;
+  const n = state.tenor;
+  const k = currentMonth();
+  
+  // Use unified state calculator
+  const s = calcCurrentState();
+  const os = s.os;
+  const currentM = s.currentM;
+  
+  // Stats
+  const totalPaid = s.totalAll;
+  const principalPaid = P - os;
+  const principalFromCicilan = Math.max(0, principalPaid - s.totalPartial);
+  const interestPaid = s.totalBunga;  // Use actual from simulation
+  
+  // Hero
+  document.getElementById('hero-os').textContent = fmtRp(os);
+  document.getElementById('hero-progress').textContent = `${k} dari ${n} bulan • ${fmtPct(k/n*100, 1)}`;
+  document.getElementById('progress-fill').style.width = (k/n*100) + '%';
+  document.getElementById('header-subtitle').textContent = `${state.bank} • Bulan ${k}/${n}`;
+  
+  // Stats
+  document.getElementById('stat-paid').textContent = fmtRp(totalPaid, true);
+  const partialNote = s.totalPartial > 0 ? ` + ${fmtRp(s.totalPartial, true)} parsial` : '';
+  document.getElementById('stat-paid-sub').textContent = `${k} cicilan${partialNote}`;
+  document.getElementById('stat-principal').textContent = fmtRp(principalPaid, true);
+  document.getElementById('stat-principal-sub').textContent = fmtPct(principalPaid/totalPaid*100, 1) + ' dari bayar';
+  document.getElementById('stat-interest').textContent = fmtRp(interestPaid, true);
+  document.getElementById('stat-interest-sub').textContent = fmtPct(interestPaid/totalPaid*100, 1) + ' dari bayar';
+  document.getElementById('stat-cicilan').textContent = fmtRp(currentM, true);
+  
+  // Countdown - use PROJECTED lunas date based on actual partials
+  const akad = new Date(state.akad);
+  const today = new Date();
+  const fixedEnd = addMonths(akad, state.masaFixed);
+  const penaltyEnd = addMonths(akad, state.penaltyMonth);
+  const projection = projectLunas(13);
+  const projectedTenorEnd = projection.date;
+  const tenorEndOriginal = addMonths(akad, state.tenor);
+  
+  const items = [
+    {
+      title: 'Masa Fixed Berakhir',
+      date: fmtMonth(fixedEnd),
+      months: monthsBetween(today, fixedEnd),
+      type: 'fixed'
+    },
+    {
+      title: 'Penalty Hilang',
+      date: fmtMonth(penaltyEnd),
+      months: monthsBetween(today, penaltyEnd),
+      type: 'penalty'
+    },
+    {
+      title: projection.month < state.tenor ? `Lunas (Proyeksi, ${state.tenor - projection.month} bln lebih cepat)` : 'Lunas (Akhir Tenor)',
+      date: fmtMonth(projectedTenorEnd),
+      months: monthsBetween(today, projectedTenorEnd),
+      type: 'tenor'
+    }
+  ];
+  
+  const html = items.map(it => {
+    let cls = 'ok';
+    if (it.months < 0) cls = 'ok';
+    else if (it.months <= 12) cls = 'urgent';
+    else if (it.months <= 36) cls = 'soon';
+    
+    let badge;
+    if (it.months < 0) badge = '✓ Lewat';
+    else if (it.months === 0) badge = 'Bulan ini!';
+    else if (it.months < 24) badge = it.months + ' bulan';
+    else badge = Math.floor(it.months/12) + ' th ' + (it.months%12) + ' bln';
+    
+    return `<div class="countdown-item ${cls}">
+      <div class="text">
+        <div class="title">${it.title}</div>
+        <div class="date">${it.date}</div>
+      </div>
+      <div class="badge">${badge}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('countdown-list').innerHTML = html;
+  
+  // Projection (use original M_orig for baseline projection without partials)
+  const M_baseline = calcAngsuran(P, state.bunga, n);
+  const fixedEndMonth = state.masaFixed;
+  const remainingAfterFixed = n - fixedEndMonth;
+  const osAtFixedEnd = calcOS(P, M_baseline, state.bunga, fixedEndMonth);
+  document.getElementById('proj-10').textContent = fmtRp(calcAngsuran(osAtFixedEnd, 10, remainingAfterFixed), true);
+  document.getElementById('proj-12').textContent = fmtRp(calcAngsuran(osAtFixedEnd, 12, remainingAfterFixed), true);
+  document.getElementById('proj-14').textContent = fmtRp(calcAngsuran(osAtFixedEnd, 14, remainingAfterFixed), true);
+  
+  // Chart composition
+  renderCompositionChart(principalPaid, interestPaid, os);
+}
+
+function renderCompositionChart(pokok, bunga, sisa) {
+  const ctx = document.getElementById('chart-composition');
+  if (!ctx || typeof Chart === 'undefined') return;
+  try {
+  if (charts.composition) charts.composition.destroy();
+  
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const textColor = isDark ? '#f1f5f9' : '#0f172a';
+  
+  charts.composition = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Pokok Terbayar', 'Bunga Terbayar', 'Sisa Pokok'],
+      datasets: [{
+        data: [pokok, bunga, sisa],
+        backgroundColor: ['#10b981', '#ef4444', '#e2e8f0'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { color: textColor, font: { size: 12 } } },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => ctx.label + ': ' + fmtRp(ctx.raw, true)
+          }
+        }
+      }
+    }
+  });
+  } catch(e) { console.warn('Composition chart error:', e); }
+}
+
+/* ==================== SCENARIO CALCULATORS ==================== */
+
+// Base: status quo dengan fixed period + floating
+function calcScenarioA() {
+  const rate = parseFloat(document.getElementById('A-rate').value) || 13;
+  const akad = new Date(state.akad);
+  
+  const phases = [
+    { fromMonth: 1, toMonth: state.masaFixed, ratePct: state.bunga },
+    { fromMonth: state.masaFixed + 1, toMonth: state.tenor, ratePct: rate }
+  ];
+  
+  const schedule = buildSchedule(state.plafond, akad, state.tenor, phases);
+  const totals = totalsFromSchedule(schedule);
+  
+  // Cicilan saat floating
+  const osAtFixed = calcOS(state.plafond, calcAngsuran(state.plafond, state.bunga, state.tenor), state.bunga, state.masaFixed);
+  const cicilanFloating = calcAngsuran(osAtFixed, rate, state.tenor - state.masaFixed);
+  
+  const html = `
+    <div class="label">📊 Hasil Skenario A</div>
+    <div class="result-row">
+      <span class="key">Cicilan saat fixed (s.d. bulan ${state.masaFixed})</span>
+      <span class="val">${fmtRp(calcAngsuran(state.plafond, state.bunga, state.tenor), true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Cicilan saat floating (bulan ${state.masaFixed+1}+)</span>
+      <span class="val bad big">${fmtRp(cicilanFloating, true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Total Cash Out 20 Tahun</span>
+      <span class="val big">${fmtRp(totals.totalCashOut, true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Total Bunga 20 Tahun</span>
+      <span class="val bad big">${fmtRp(totals.totalBunga, true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Tanggal Lunas</span>
+      <span class="val">${fmtMonth(totals.lunasDate)}</span>
+    </div>
+    <div class="verdict warn">⚠️ Baseline — bandingkan skenario lain</div>
+  `;
+  document.getElementById('A-result').innerHTML = html;
+  
+  // Update chip active state
+  document.querySelectorAll('#scn-A .chip').forEach(c => c.classList.remove('active'));
+  const presets = {10: 0, 12: 1, 13: 2, 14: 3};
+  if (rate in presets) {
+    document.querySelectorAll('#scn-A .chip')[presets[rate]]?.classList.add('active');
+  }
+  
+  if (!_inUpdate) updateCompareTable();
+  return { totals, label: 'Status Quo', rate };
+}
+
+function setRate(id, val) {
+  document.getElementById(id + '-rate').value = val;
+  if (id === 'A') calcScenarioA();
+  updateCompareTable();
+}
+
+// Negosiasi: extend fixed dengan rate baru
+function calcScenarioB() {
+  const newRate = parseFloat(document.getElementById('B-rate').value) || 7;
+  const years = parseInt(document.getElementById('B-years').value) || 5;
+  const floatRate = parseFloat(document.getElementById('B-float').value) || 12;
+  const akad = new Date(state.akad);
+  const extEnd = state.masaFixed + years * 12;
+  
+  const phases = [
+    { fromMonth: 1, toMonth: state.masaFixed, ratePct: state.bunga },
+    { fromMonth: state.masaFixed + 1, toMonth: Math.min(extEnd, state.tenor), ratePct: newRate },
+    { fromMonth: extEnd + 1, toMonth: state.tenor, ratePct: floatRate }
+  ];
+  
+  const schedule = buildSchedule(state.plafond, akad, state.tenor, phases);
+  const totals = totalsFromSchedule(schedule);
+  
+  // Compare to A (status quo @ 13%)
+  const baselineTotals = totalsFromSchedule(buildSchedule(state.plafond, akad, state.tenor, [
+    { fromMonth: 1, toMonth: state.masaFixed, ratePct: state.bunga },
+    { fromMonth: state.masaFixed + 1, toMonth: state.tenor, ratePct: 13 }
+  ]));
+  const saving = baselineTotals.totalCashOut - totals.totalCashOut;
+  
+  // Cicilan pada masa extension
+  const osAtFixed = calcOS(state.plafond, calcAngsuran(state.plafond, state.bunga, state.tenor), state.bunga, state.masaFixed);
+  const cicilanExt = calcAngsuran(osAtFixed, newRate, state.tenor - state.masaFixed);
+  
+  let verdict;
+  if (saving > 100000000) verdict = `<div class="verdict good">✅ WORTH IT — hemat ${fmtRp(saving, true)} vs Status Quo</div>`;
+  else if (saving > 0) verdict = `<div class="verdict warn">⚠️ MARGINAL — hemat hanya ${fmtRp(saving, true)}</div>`;
+  else verdict = `<div class="verdict bad">❌ TIDAK MENGUNTUNGKAN — rugi ${fmtRp(-saving, true)}</div>`;
+  
+  document.getElementById('B-result').innerHTML = `
+    <div class="label">📊 Hasil Skenario B (Negosiasi)</div>
+    <div class="result-row">
+      <span class="key">Cicilan masa extension (${years} thn)</span>
+      <span class="val good big">${fmtRp(cicilanExt, true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Total Cash Out</span>
+      <span class="val big">${fmtRp(totals.totalCashOut, true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Total Bunga</span>
+      <span class="val bad">${fmtRp(totals.totalBunga, true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Biaya Negosiasi</span>
+      <span class="val good">Rp 0 (no fee)</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Saving vs Status Quo (13%)</span>
+      <span class="val good big">${fmtRp(saving, true)}</span>
+    </div>
+    ${verdict}
+  `;
+  
+  if (!_inUpdate) updateCompareTable();
+  return { totals, label: 'Negosiasi', rate: newRate, saving };
+}
+
+// Take-over
+function calcScenarioC() {
+  const tkMonth = parseInt(document.getElementById('C-month').value) || 60;
+  const newRate = parseFloat(document.getElementById('C-rate').value) || 5.3;
+  const years = parseInt(document.getElementById('C-years').value) || 5;
+  const floatRate = parseFloat(document.getElementById('C-float').value) || 11;
+  const cost = parseFloat(document.getElementById('C-cost').value) || 145000000;
+  const akad = new Date(state.akad);
+  
+  // OS saat take-over
+  const M_orig = calcAngsuran(state.plafond, state.bunga, state.tenor);
+  // Determine rate at takeover month
+  let osAtTk;
+  if (tkMonth <= state.masaFixed) {
+    osAtTk = calcOS(state.plafond, M_orig, state.bunga, tkMonth);
+  } else {
+    // After fixed: assume 13% floating
+    const osAtFixed = calcOS(state.plafond, M_orig, state.bunga, state.masaFixed);
+    const M_float = calcAngsuran(osAtFixed, 13, state.tenor - state.masaFixed);
+    osAtTk = calcOS(osAtFixed, M_float, 13, tkMonth - state.masaFixed);
+  }
+  
+  // Penalty auto-calc
+  const penaltyAuto = tkMonth < state.penaltyMonth ? osAtTk * state.penalty / 100 : 0;
+  
+  // New plafond after take-over (assume new bank pays off existing + penalty rolled in)
+  const newPlafond = osAtTk;
+  const newTenor = state.tenor - tkMonth;
+  const fixedEndNew = years * 12;
+  
+  // Phases at new bank
+  const newPhases = [
+    { fromMonth: 1, toMonth: fixedEndNew, ratePct: newRate },
+    { fromMonth: fixedEndNew + 1, toMonth: newTenor, ratePct: floatRate }
+  ];
+  const newSchedule = buildSchedule(newPlafond, addMonths(akad, tkMonth), newTenor, newPhases);
+  const newTotals = totalsFromSchedule(newSchedule);
+  
+  // Total paid at BRI before take-over
+  let paidBRI = 0;
+  if (tkMonth <= state.masaFixed) {
+    paidBRI = M_orig * tkMonth;
+  } else {
+    paidBRI = M_orig * state.masaFixed;
+    const osAtFixed = calcOS(state.plafond, M_orig, state.bunga, state.masaFixed);
+    const M_float = calcAngsuran(osAtFixed, 13, state.tenor - state.masaFixed);
+    paidBRI += M_float * (tkMonth - state.masaFixed);
+  }
+  
+  const totalCashOut = paidBRI + cost + newTotals.totalBayar;
+  
+  // Baseline (status quo 13%)
+  const baselineTotals = totalsFromSchedule(buildSchedule(state.plafond, akad, state.tenor, [
+    { fromMonth: 1, toMonth: state.masaFixed, ratePct: state.bunga },
+    { fromMonth: state.masaFixed + 1, toMonth: state.tenor, ratePct: 13 }
+  ]));
+  const saving = baselineTotals.totalCashOut - totalCashOut;
+  
+  // Cicilan baru
+  const cicilanNew = calcAngsuran(newPlafond, newRate, newTenor);
+  const cicilanBRIfloat = calcAngsuran(osAtTk, 13, state.tenor - tkMonth);
+  const monthlysaving = cicilanBRIfloat - cicilanNew;
+  const breakEvenMonth = monthlysaving > 0 ? Math.ceil(cost / monthlysaving) : Infinity;
+  
+  let verdict;
+  if (saving > 200000000 && breakEvenMonth < 36) verdict = `<div class="verdict good">✅ WORTH IT — break-even ${breakEvenMonth} bulan, hemat ${fmtRp(saving, true)}</div>`;
+  else if (saving > 0) verdict = `<div class="verdict warn">⚠️ MARGINAL — break-even ${breakEvenMonth} bulan, hemat ${fmtRp(saving, true)}</div>`;
+  else verdict = `<div class="verdict bad">❌ TIDAK WORTH IT — rugi ${fmtRp(-saving, true)}</div>`;
+  
+  document.getElementById('C-result').innerHTML = `
+    <div class="label">📊 Hasil Skenario C (Take-over)</div>
+    <div class="result-row">
+      <span class="key">OS saat take-over (bulan ${tkMonth})</span>
+      <span class="val">${fmtRp(osAtTk, true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Penalty BRI ${tkMonth < state.penaltyMonth ? '(' + state.penalty + '%)' : '(0%, sudah lewat)'}</span>
+      <span class="val bad">${fmtRp(penaltyAuto, true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Cicilan baru (${newRate}% fixed)</span>
+      <span class="val good big">${fmtRp(cicilanNew, true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Saving per bulan</span>
+      <span class="val good">${fmtRp(monthlysaving, true)}/bln</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Break-even point</span>
+      <span class="val ${breakEvenMonth < 36 ? 'good' : 'warn'}">${breakEvenMonth === Infinity ? '—' : breakEvenMonth + ' bulan'}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Total Cash Out (semua)</span>
+      <span class="val big">${fmtRp(totalCashOut, true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Saving vs Status Quo</span>
+      <span class="val good big">${fmtRp(saving, true)}</span>
+    </div>
+    ${verdict}
+    <div class="help" style="margin-top:10px">💡 Penalty auto-hitung: ${tkMonth < state.penaltyMonth ? state.penalty + '% × OS' : 'tidak ada (sudah lewat ' + state.penaltyMonth + ' bulan)'}</div>
+  `;
+  
+  if (!_inUpdate) updateCompareTable();
+  return { totals: { totalCashOut, totalBunga: totalCashOut - state.plafond, lunasDate: addMonths(akad, tkMonth + newTenor) }, label: 'Take-over', rate: newRate, saving, breakEven: breakEvenMonth };
+}
+
+// Pelunasan Parsial
+function addPartialEvent() {
+  const amount = parseFloat(document.getElementById('D-amount').value) || 0;
+  const month = parseInt(document.getElementById('D-month').value) || 0;
+  if (amount <= 0 || month <= 0 || month > state.tenor) {
+    showToast('⚠️ Input tidak valid');
+    return;
+  }
+  state.partialEvents.push({ amount, month });
+  state.partialEvents.sort((a, b) => a.month - b.month);
+  saveState();
+  renderPartialEvents();
+  calcScenarioD();
+  showToast('✓ Event ditambahkan');
+}
+
+function removePartialEvent(idx) {
+  state.partialEvents.splice(idx, 1);
+  saveState();
+  renderPartialEvents();
+  calcScenarioD();
+}
+
+/* ========= ACTUAL PARTIALS (pelunasan parsial yang SUDAH dilakukan) ========= */
+function addActualPartial() {
+  const amount = parseFloat(document.getElementById('actual-amount').value) || 0;
+  const month = parseInt(document.getElementById('actual-month').value) || 0;
+  const mode = document.getElementById('actual-mode').value || 'reduce_tenor';
+  const k = currentMonth();
+  if (amount <= 0) {
+    showToast('⚠️ Jumlah harus > 0');
+    return;
+  }
+  if (month <= 0 || month > k) {
+    showToast(`⚠️ Bulan harus 1 - ${k} (sudah terlewati)`);
+    return;
+  }
+  if (!state.actualPartials) state.actualPartials = [];
+  state.actualPartials.push({ amount, month, mode });
+  state.actualPartials.sort((a, b) => a.month - b.month);
+  saveState();
+  renderActualPartials();
+  renderDashboard();
+  document.getElementById('actual-amount').value = 0;
+  showToast('✓ Pelunasan aktual dicatat • semua parameter diupdate');
+}
+
+function removeActualPartial(idx) {
+  if (!confirm('Hapus pelunasan aktual ini? Semua parameter akan dihitung ulang.')) return;
+  state.actualPartials.splice(idx, 1);
+  saveState();
+  renderActualPartials();
+  renderDashboard();
+  showToast('✓ Dihapus');
+}
+
+function renderActualPartials() {
+  const container = document.getElementById('actual-partials-list');
+  if (!container) return;
+  const list = state.actualPartials || [];
+  if (list.length === 0) {
+    container.innerHTML = '<div class="help">Belum ada pelunasan parsial aktual.</div>';
+    return;
+  }
+  const akad = new Date(state.akad);
+  const totalAmount = list.reduce((s, p) => s + p.amount, 0);
+  const totalPenalty = list.reduce((s, p) => s + (p.month < state.penaltyMonth ? p.amount * state.penalty / 100 : 0), 0);
+  
+  container.innerHTML = `
+    <div style="background:var(--bg-input);padding:8px 10px;border-radius:6px;margin-bottom:8px;font-size:12px">
+      <b>Total pelunasan aktual:</b> ${fmtRp(totalAmount, true)} 
+      ${totalPenalty > 0 ? ' + penalty ' + fmtRp(totalPenalty, true) : ''}
+    </div>
+    ${list.map((p, i) => {
+      const d = addMonths(akad, p.month);
+      const penaltyText = p.month < state.penaltyMonth 
+        ? `Penalty ${fmtRp(p.amount * state.penalty / 100, true)}` 
+        : 'Bebas penalty';
+      const mode = p.mode || 'reduce_tenor';
+      const modeLabel = mode === 'reduce_tenor' ? '⚡ Kurangi Tenor' : '💧 Kurangi Cicilan';
+      return `<div class="event-item">
+        <div class="info">
+          <div class="amount">${fmtRp(p.amount, true)} • Bulan ${p.month}</div>
+          <div class="meta">${fmtMonth(d)} • ${penaltyText}</div>
+          <div class="meta" style="margin-top:2px">${modeLabel}</div>
+        </div>
+        <button class="remove-btn" onclick="removeActualPartial(${i})">✕</button>
+      </div>`;
+    }).join('')}
+  `;
+}
+
+/* ========= APPLY PARTIAL EVENTS TO ACTUAL (from Skenario D) ========= */
+function applyToActual() {
+  if (state.partialEvents.length === 0) {
+    showToast('⚠️ Belum ada event di Skenario D');
+    return;
+  }
+  
+  const k = currentMonth();
+  const mode = document.getElementById('D-mode').value || 'reduce_tenor';
+  const eligibleEvents = state.partialEvents.filter(e => e.month <= k);
+  
+  if (eligibleEvents.length === 0) {
+    showToast(`⚠️ Tidak ada event di bulan ≤ ${k} (yang sudah terlewat)`);
+    return;
+  }
+  
+  const totalAmount = eligibleEvents.reduce((s, e) => s + e.amount, 0);
+  const modeLabel = mode === 'reduce_tenor' ? 'Kurangi Tenor' : 'Kurangi Cicilan';
+  
+  if (!confirm(`Konfirmasi: pindahkan ${eligibleEvents.length} event (total ${fmtRp(totalAmount, true)}) ke Pelunasan Aktual dengan mode "${modeLabel}"?\n\nEvent yang dipindahkan akan dihapus dari simulator dan OS dashboard akan diupdate.`)) return;
+  
+  if (!state.actualPartials) state.actualPartials = [];
+  for (const e of eligibleEvents) {
+    state.actualPartials.push({ amount: e.amount, month: e.month, mode });
+  }
+  state.actualPartials.sort((a, b) => a.month - b.month);
+  
+  // Remove from simulator events
+  state.partialEvents = state.partialEvents.filter(e => e.month > k);
+  
+  saveState();
+  renderPartialEvents();
+  renderActualPartials();
+  renderDashboard();
+  calcScenarioD();
+  showToast(`✓ ${eligibleEvents.length} event dipindahkan ke kondisi aktual`);
+}
+
+function renderPartialEvents() {
+  const container = document.getElementById('D-events');
+  const clearBtn = document.getElementById('D-clear-btn');
+  const applyBtn = document.getElementById('D-apply-actual-btn');
+  if (state.partialEvents.length === 0) {
+    container.innerHTML = '<div class="help">Belum ada event. Tambah pelunasan parsial di atas.</div>';
+    if (clearBtn) clearBtn.style.display = 'none';
+    if (applyBtn) applyBtn.style.display = 'none';
+    return;
+  }
+  if (clearBtn) clearBtn.style.display = 'block';
+  
+  const k = currentMonth();
+  const eligibleCount = state.partialEvents.filter(e => e.month <= k).length;
+  if (applyBtn) {
+    applyBtn.style.display = eligibleCount > 0 ? 'block' : 'none';
+    if (eligibleCount > 0) {
+      applyBtn.innerHTML = `✅ Masukan ke Kondisi Aktual (${eligibleCount} event di bulan ≤ ${k})`;
+    }
+  }
+  
+  const akad = new Date(state.akad);
+  container.innerHTML = state.partialEvents.map((e, i) => {
+    const d = addMonths(akad, e.month);
+    const penalty = e.month < state.penaltyMonth ? 'Penalty ' + state.penalty + '%' : 'Bebas penalty';
+    const isPast = e.month <= k;
+    const pastLabel = isPast ? ' • <span style="color:var(--primary)">📌 bisa dijadikan aktual</span>' : '';
+    return `<div class="event-item">
+      <div class="info">
+        <div class="amount">${fmtRp(e.amount, true)} • Bulan ${e.month}</div>
+        <div class="meta">${fmtMonth(d)} • ${penalty}${pastLabel}</div>
+      </div>
+      <button class="remove-btn" onclick="removePartialEvent(${i})">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function calcScenarioD() {
+  const mode = document.getElementById('D-mode').value;
+  const floatRate = parseFloat(document.getElementById('D-float').value) || 13;
+  const akad = new Date(state.akad);
+  const events = [...state.partialEvents].sort((a, b) => a.month - b.month);
+  
+  // Pre-compute ORIGINAL M values (as if NO partials happened)
+  // These are used in Mode A to preserve "what cicilan would have been"
+  const M_fixed_orig = calcAngsuran(state.plafond, state.bunga, state.tenor);
+  const OS_at_60_baseline = calcOS(state.plafond, M_fixed_orig, state.bunga, state.masaFixed);
+  const M_floating_orig = calcAngsuran(OS_at_60_baseline, floatRate, state.tenor - state.masaFixed);
+  
+  // Custom schedule with partial events
+  const schedule = [];
+  let os = state.plafond;
+  let currentRate = state.bunga;
+  let M = M_fixed_orig;
+  let remainingMonths = state.tenor;
+  let totalPenalty = 0;
+  const initialM_fixed = M_fixed_orig;
+  let initialM_floating = null;
+  const cicilanEvolution = []; // {afterMonth, newM, rate, reason}
+  
+  for (let month = 1; month <= state.tenor; month++) {
+    if (month === state.masaFixed + 1) {
+      currentRate = floatRate;
+      if (mode === 'reduce_tenor') {
+        // Mode A: use ORIGINAL M_floating (as if no partial happened during fixed)
+        // This makes loan finish EARLIER because OS is smaller but cicilan is same
+        M = M_floating_orig;
+      } else {
+        // Mode B: recalc based on actual (smaller) OS for full remaining tenor
+        remainingMonths = state.tenor - month + 1;
+        M = calcAngsuran(os, currentRate, remainingMonths);
+      }
+      initialM_floating = M;
+      cicilanEvolution.push({ afterMonth: month - 1, newM: M, rate: floatRate, reason: 'Mulai floating' });
+    }
+    
+    const r = currentRate / 100 / 12;
+    const bunga = os * r;
+    let pokok = M - bunga;
+    if (pokok > os) pokok = os;
+    
+    let partial = 0;
+    const evt = events.find(e => e.month === month);
+    if (evt) {
+      partial = Math.min(evt.amount, os - pokok);
+      if (month < state.penaltyMonth) totalPenalty += partial * state.penalty / 100;
+    }
+    
+    os -= (pokok + partial);
+    
+    schedule.push({ month, cicilan: bunga + pokok, pokok, bunga, partial, os, rate: currentRate });
+    
+    if (os <= 0.01) break;
+    
+    if (partial > 0 && mode === 'reduce_payment') {
+      // Mode B only: recalc M after each partial
+      remainingMonths = state.tenor - month;
+      M = calcAngsuran(os, currentRate, remainingMonths);
+      cicilanEvolution.push({ afterMonth: month, newM: M, rate: currentRate, reason: `Setelah parsial Rp ${(partial/1e6).toFixed(0)}jt`, partial });
+    }
+    // Mode A: M stays at original — schedule ends when OS hits 0 (sooner than tenor)
+  }
+  
+  const totals = {
+    totalBayar: schedule.reduce((s, x) => s + x.cicilan, 0),
+    totalPokok: schedule.reduce((s, x) => s + x.pokok + x.partial, 0),
+    totalBunga: schedule.reduce((s, x) => s + x.bunga, 0),
+    totalPartial: events.reduce((s, x) => s + x.amount, 0),
+    totalPenalty,
+    lunasMonth: schedule.length,
+    lunasDate: addMonths(akad, schedule.length)
+  };
+  totals.totalCashOut = schedule.reduce((s, x) => s + x.bunga + x.pokok + x.partial, 0) + totalPenalty;
+  
+  // Baseline: status quo at same floating rate
+  const baselineTotals = totalsFromSchedule(buildSchedule(state.plafond, akad, state.tenor, [
+    { fromMonth: 1, toMonth: state.masaFixed, ratePct: state.bunga },
+    { fromMonth: state.masaFixed + 1, toMonth: state.tenor, ratePct: floatRate }
+  ]));
+  const bungaSaved = baselineTotals.totalBunga - totals.totalBunga;
+  const netBenefit = bungaSaved - totalPenalty;
+  const monthsFaster = state.tenor - totals.lunasMonth;
+  
+  let verdict;
+  if (events.length === 0) verdict = '<div class="verdict warn">⚠️ Belum ada event pelunasan</div>';
+  else if (netBenefit > 100000000) verdict = `<div class="verdict good">✅ HEMAT BERSIH ${fmtRp(netBenefit, true)} setelah penalty</div>`;
+  else if (netBenefit > 0) verdict = `<div class="verdict warn">⚠️ HEMAT TIPIS ${fmtRp(netBenefit, true)}</div>`;
+  else verdict = `<div class="verdict bad">❌ RUGI ${fmtRp(-netBenefit, true)} (penalty > bunga dihemat)</div>`;
+  
+  // NEW: Mode-specific info block
+  let modeInfoHTML = '';
+  if (events.length > 0) {
+    if (mode === 'reduce_payment') {
+      // Mode B: show cicilan evolution
+      const lastM = cicilanEvolution.length > 0 ? cicilanEvolution[cicilanEvolution.length-1].newM : M;
+      const reductionPct = ((1 - lastM/initialM_fixed)*100).toFixed(0);
+      modeInfoHTML = `
+        <div class="mode-info-box mode-b">
+          <div class="mode-info-title">💧 Mode B: Kurangi Cicilan</div>
+          <div class="mode-info-desc">Tenor tetap sampai Apr 2042 • Cicilan turun setelah setiap parsial</div>
+          <div class="mode-info-evolution">
+            <div class="mode-evo-row"><span>Awal (fixed 6,49%)</span><span><b>${fmtRp(initialM_fixed, true)}</b></span></div>
+            ${cicilanEvolution.map(c => `
+              <div class="mode-evo-row">
+                <span>Setelah bulan ${c.afterMonth}: ${c.reason}</span>
+                <span><b>${fmtRp(c.newM, true)}</b></span>
+              </div>
+            `).join('')}
+            <div class="mode-evo-row mode-evo-final">
+              <span>📊 Cicilan akhir vs awal</span>
+              <span><b class="good">turun ${reductionPct}%</b></span>
+            </div>
+          </div>
+        </div>
+      `;
+    } else {
+      // Mode A: show months faster
+      const yrs = Math.floor(monthsFaster/12);
+      const mos = monthsFaster % 12;
+      const fasterStr = yrs > 0 ? `${yrs} tahun ${mos} bulan` : `${mos} bulan`;
+      modeInfoHTML = `
+        <div class="mode-info-box mode-a">
+          <div class="mode-info-title">⚡ Mode A: Kurangi Tenor</div>
+          <div class="mode-info-desc">Cicilan tetap • Lunas lebih cepat</div>
+          <div class="mode-info-evolution">
+            <div class="mode-evo-row"><span>Cicilan fixed (saat ini–Apr 2027)</span><span><b>${fmtRp(initialM_fixed, true)}</b></span></div>
+            ${initialM_floating ? `<div class="mode-evo-row"><span>Cicilan floating (Mei 2027+)</span><span><b>${fmtRp(initialM_floating, true)}</b></span></div>` : ''}
+            <div class="mode-evo-row mode-evo-final">
+              <span>📊 Lunas lebih cepat</span>
+              <span><b class="good">${fasterStr}</b></span>
+            </div>
+            <div class="mode-evo-row">
+              <span>Sebelumnya: Apr 2042</span>
+              <span>→ <b class="good">${fmtMonth(totals.lunasDate)}</b></span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+  }
+  
+  document.getElementById('D-result').innerHTML = `
+    <div class="label">📊 Hasil Skenario D (Pelunasan Parsial)</div>
+    ${modeInfoHTML}
+    <div class="result-row">
+      <span class="key">Total Pelunasan Parsial</span>
+      <span class="val">${fmtRp(totals.totalPartial, true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Total Penalty</span>
+      <span class="val bad">${fmtRp(totals.totalPenalty, true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Bunga Dihemat vs Tanpa Pelunasan</span>
+      <span class="val good big">${fmtRp(bungaSaved, true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Net Benefit (bunga hemat − penalty)</span>
+      <span class="val ${netBenefit > 0 ? 'good' : 'bad'} big">${fmtRp(netBenefit, true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Lunas (vs Apr 2042 status quo)</span>
+      <span class="val good">${fmtMonth(totals.lunasDate)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Total Cash Out</span>
+      <span class="val big">${fmtRp(totals.totalCashOut, true)}</span>
+    </div>
+    ${verdict}
+    <div class="help" style="margin-top:10px">💡 ROI Pelunasan: setara investasi return ${totals.totalPartial > 0 ? ((bungaSaved / totals.totalPartial * 100) / ((state.tenor - state.masaFixed) / 12)).toFixed(1) : 0}% p.a. net pajak</div>
+  `;
+  
+  if (!_inUpdate) updateCompareTable();
+  return { totals, label: 'Parsial', rate: floatRate, netBenefit };
+}
+
+// Pelunasan Total
+function calcScenarioE() {
+  const lunasMonth = parseInt(document.getElementById('E-month').value) || 120;
+  const floatRate = parseFloat(document.getElementById('E-float').value) || 13;
+  const investRate = parseFloat(document.getElementById('E-invest').value) || 7;
+  const akad = new Date(state.akad);
+  
+  // OS at lunas month
+  const M_orig = calcAngsuran(state.plafond, state.bunga, state.tenor);
+  let osAtLunas, paidUntilLunas = 0;
+  if (lunasMonth <= state.masaFixed) {
+    osAtLunas = calcOS(state.plafond, M_orig, state.bunga, lunasMonth);
+    paidUntilLunas = M_orig * lunasMonth;
+  } else {
+    const osAtFixed = calcOS(state.plafond, M_orig, state.bunga, state.masaFixed);
+    const M_float = calcAngsuran(osAtFixed, floatRate, state.tenor - state.masaFixed);
+    osAtLunas = calcOS(osAtFixed, M_float, floatRate, lunasMonth - state.masaFixed);
+    paidUntilLunas = M_orig * state.masaFixed + M_float * (lunasMonth - state.masaFixed);
+  }
+  
+  const penalty = lunasMonth < state.penaltyMonth ? osAtLunas * state.penalty / 100 : 0;
+  const cashOutNow = osAtLunas + penalty;
+  const totalCashOut = paidUntilLunas + cashOutNow;
+  
+  // Baseline: lanjut sampai tenor habis at floating rate
+  const baselineTotals = totalsFromSchedule(buildSchedule(state.plafond, akad, state.tenor, [
+    { fromMonth: 1, toMonth: state.masaFixed, ratePct: state.bunga },
+    { fromMonth: state.masaFixed + 1, toMonth: state.tenor, ratePct: floatRate }
+  ]));
+  const saving = baselineTotals.totalCashOut - totalCashOut;
+  
+  // Opportunity cost analysis
+  const monthsAfterLunas = state.tenor - lunasMonth;
+  const investFV = cashOutNow * Math.pow(1 + investRate/100, monthsAfterLunas/12);
+  const baselineRemainingPayment = baselineTotals.totalCashOut - paidUntilLunas;
+  const oppCost = investFV - baselineRemainingPayment;
+  
+  let verdict;
+  if (lunasMonth < state.penaltyMonth) {
+    if (saving > 0) verdict = `<div class="verdict warn">⚠️ Hemat ${fmtRp(saving, true)} TAPI kena penalty ${fmtRp(penalty, true)}. Tunggu bulan ${state.penaltyMonth} lebih untung.</div>`;
+    else verdict = `<div class="verdict bad">❌ Kena penalty besar. Tunggu bulan ${state.penaltyMonth}.</div>`;
+  } else {
+    if (saving > 500000000) verdict = `<div class="verdict good">✅ OPTIMAL — hemat ${fmtRp(saving, true)}, no penalty</div>`;
+    else verdict = `<div class="verdict good">✅ Hemat ${fmtRp(saving, true)}, no penalty</div>`;
+  }
+  
+  document.getElementById('E-result').innerHTML = `
+    <div class="label">📊 Hasil Skenario E (Pelunasan Total)</div>
+    <div class="result-row">
+      <span class="key">OS saat lunas (bulan ${lunasMonth})</span>
+      <span class="val big">${fmtRp(osAtLunas, true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Penalty (${lunasMonth < state.penaltyMonth ? state.penalty + '%' : '0% — sudah lewat'})</span>
+      <span class="val bad">${fmtRp(penalty, true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Cash Out Sekarang</span>
+      <span class="val warn big">${fmtRp(cashOutNow, true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Total Bayar (cicilan + lunas)</span>
+      <span class="val big">${fmtRp(totalCashOut, true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Saving vs Diteruskan</span>
+      <span class="val ${saving > 0 ? 'good' : 'bad'} big">${fmtRp(saving, true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Jika diinvest @ ${investRate}% (FV)</span>
+      <span class="val">${fmtRp(investFV, true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Opportunity Cost vs Invest</span>
+      <span class="val ${oppCost > 0 ? 'bad' : 'good'}">${fmtRp(Math.abs(oppCost), true)} ${oppCost > 0 ? '(invest lebih untung)' : '(lunas lebih untung)'}</span>
+    </div>
+    ${verdict}
+  `;
+  
+  if (!_inUpdate) updateCompareTable();
+  return { totals: { totalCashOut, totalBunga: totalCashOut - state.plafond, lunasDate: addMonths(akad, lunasMonth) }, label: 'Lunas Total', saving };
+}
+
+// HYBRID
+function addHybridEvent() {
+  const amount = parseFloat(document.getElementById('H-amount').value) || 0;
+  const month = parseInt(document.getElementById('H-month').value) || 0;
+  if (amount <= 0 || month <= 0) { showToast('⚠️ Input tidak valid'); return; }
+  state.hybridEvents.push({ amount, month });
+  state.hybridEvents.sort((a, b) => a.month - b.month);
+  saveState();
+  renderHybridEvents();
+  calcScenarioH();
+  showToast('✓ Event ditambahkan');
+}
+
+function removeHybridEvent(idx) {
+  state.hybridEvents.splice(idx, 1);
+  saveState();
+  renderHybridEvents();
+  calcScenarioH();
+}
+
+function renderHybridEvents() {
+  const container = document.getElementById('H-events');
+  const clearBtn = document.getElementById('H-clear-btn');
+  if (state.hybridEvents.length === 0) {
+    container.innerHTML = '<div class="help">Belum ada pelunasan parsial</div>';
+    if (clearBtn) clearBtn.style.display = 'none';
+    return;
+  }
+  if (clearBtn) clearBtn.style.display = 'block';
+  const akad = new Date(state.akad);
+  container.innerHTML = state.hybridEvents.map((e, i) => {
+    const d = addMonths(akad, e.month);
+    return `<div class="event-item">
+      <div class="info">
+        <div class="amount">${fmtRp(e.amount, true)} • Bulan ${e.month}</div>
+        <div class="meta">${fmtMonth(d)}</div>
+      </div>
+      <button class="remove-btn" onclick="removeHybridEvent(${i})">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function onHybridStep1Change() {
+  renderHybridStep1Params();
+  calcScenarioH();
+  updateCompareTable();
+}
+
+function renderHybridStep1Params() {
+  const step = document.getElementById('H-step1').value;
+  const container = document.getElementById('H-step1-params');
+  if (step === 'floating') {
+    container.innerHTML = `<div class="input-group">
+      <label>Rate Floating (%)</label>
+      <div class="input-suffix"><input type="number" id="H-float-rate" value="13" step="0.1" oninput="calcScenarioH()"><span class="suffix">%</span></div>
+    </div>`;
+  } else if (step === 'negotiate') {
+    container.innerHTML = `
+      <div class="input-row">
+        <div class="input-group">
+          <label>Rate Nego (%)</label>
+          <div class="input-suffix"><input type="number" id="H-nego-rate" value="7" step="0.1" oninput="calcScenarioH()"><span class="suffix">%</span></div>
+        </div>
+        <div class="input-group">
+          <label>Durasi (thn)</label>
+          <input type="number" id="H-nego-years" value="5" step="1" oninput="calcScenarioH()">
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Rate Floating Setelahnya (%)</label>
+        <div class="input-suffix"><input type="number" id="H-nego-float" value="12" step="0.1" oninput="calcScenarioH()"><span class="suffix">%</span></div>
+      </div>`;
+  } else if (step === 'takeover') {
+    container.innerHTML = `
+      <div class="input-row">
+        <div class="input-group">
+          <label>Rate Bank Baru (%)</label>
+          <div class="input-suffix"><input type="number" id="H-tk-rate" value="5.3" step="0.1" oninput="calcScenarioH()"><span class="suffix">%</span></div>
+        </div>
+        <div class="input-group">
+          <label>Durasi Fixed (thn)</label>
+          <input type="number" id="H-tk-years" value="5" step="1" oninput="calcScenarioH()">
+        </div>
+      </div>
+      <div class="input-row">
+        <div class="input-group">
+          <label>Floating Setelah (%)</label>
+          <div class="input-suffix"><input type="number" id="H-tk-float" value="11" step="0.1" oninput="calcScenarioH()"><span class="suffix">%</span></div>
+        </div>
+        <div class="input-group">
+          <label>Biaya Switching (Rp)</label>
+          <input type="number" id="H-tk-cost" value="145000000" step="1000000" oninput="calcScenarioH()">
+        </div>
+      </div>`;
+  }
+}
+
+function calcScenarioH() {
+  const step = document.getElementById('H-step1').value;
+  const akad = new Date(state.akad);
+  let phases = [{ fromMonth: 1, toMonth: state.masaFixed, ratePct: state.bunga }];
+  let extraCost = 0;
+  let extraPenalty = 0;
+  
+  // Step 1 phases
+  if (step === 'floating') {
+    const rate = parseFloat(document.getElementById('H-float-rate')?.value) || 13;
+    phases.push({ fromMonth: state.masaFixed + 1, toMonth: state.tenor, ratePct: rate });
+  } else if (step === 'negotiate') {
+    const rate = parseFloat(document.getElementById('H-nego-rate')?.value) || 7;
+    const years = parseInt(document.getElementById('H-nego-years')?.value) || 5;
+    const floatRate = parseFloat(document.getElementById('H-nego-float')?.value) || 12;
+    const extEnd = state.masaFixed + years * 12;
+    phases.push({ fromMonth: state.masaFixed + 1, toMonth: Math.min(extEnd, state.tenor), ratePct: rate });
+    if (extEnd < state.tenor) phases.push({ fromMonth: extEnd + 1, toMonth: state.tenor, ratePct: floatRate });
+  } else if (step === 'takeover') {
+    const rate = parseFloat(document.getElementById('H-tk-rate')?.value) || 5.3;
+    const years = parseInt(document.getElementById('H-tk-years')?.value) || 5;
+    const floatRate = parseFloat(document.getElementById('H-tk-float')?.value) || 11;
+    const cost = parseFloat(document.getElementById('H-tk-cost')?.value) || 145000000;
+    const tkEnd = state.masaFixed + years * 12;
+    phases.push({ fromMonth: state.masaFixed + 1, toMonth: Math.min(tkEnd, state.tenor), ratePct: rate });
+    if (tkEnd < state.tenor) phases.push({ fromMonth: tkEnd + 1, toMonth: state.tenor, ratePct: floatRate });
+    extraCost = cost;
+  }
+  
+  const lunasTotalMonth = parseInt(document.getElementById('H-lunas').value) || 0;
+  const events = [...state.hybridEvents].sort((a, b) => a.month - b.month);
+  
+  // Custom simulation with all events
+  let os = state.plafond;
+  let currentPhase = phases[0];
+  let M = calcAngsuran(state.plafond, currentPhase.ratePct, state.tenor);
+  let totalBayar = 0, totalBunga = 0, totalPokok = 0, totalPartial = 0;
+  let lastMonth = 0;
+  
+  for (let month = 1; month <= state.tenor; month++) {
+    const phase = phases.find(p => month >= p.fromMonth && month <= p.toMonth);
+    if (phase && phase !== currentPhase) {
+      currentPhase = phase;
+      M = calcAngsuran(os, currentPhase.ratePct, state.tenor - month + 1);
+    }
+    
+    const r = currentPhase.ratePct / 100 / 12;
+    const bunga = os * r;
+    let pokok = M - bunga;
+    if (pokok > os) pokok = os;
+    
+    totalBayar += bunga + pokok;
+    totalBunga += bunga;
+    totalPokok += pokok;
+    os -= pokok;
+    
+    // Partial event?
+    const evt = events.find(e => e.month === month);
+    if (evt && os > 0) {
+      const partial = Math.min(evt.amount, os);
+      if (month < state.penaltyMonth) extraPenalty += partial * state.penalty / 100;
+      os -= partial;
+      totalPartial += partial;
+      // Recalc M (reduce tenor mode by default)
+      if (os > 0) {
+        // keep M, tenor shortens
+      }
+    }
+    
+    // Lunas total?
+    if (lunasTotalMonth > 0 && month === lunasTotalMonth && os > 0) {
+      if (month < state.penaltyMonth) extraPenalty += os * state.penalty / 100;
+      totalPartial += os;
+      os = 0;
+    }
+    
+    lastMonth = month;
+    if (os <= 0.01) break;
+  }
+  
+  const totalCashOut = totalBayar + totalPartial + extraCost + extraPenalty;
+  
+  // Baseline 13%
+  const baselineTotals = totalsFromSchedule(buildSchedule(state.plafond, akad, state.tenor, [
+    { fromMonth: 1, toMonth: state.masaFixed, ratePct: state.bunga },
+    { fromMonth: state.masaFixed + 1, toMonth: state.tenor, ratePct: 13 }
+  ]));
+  const saving = baselineTotals.totalCashOut - totalCashOut;
+  
+  let verdict;
+  if (saving > 400000000) verdict = `<div class="verdict good">🏆 STRATEGI OPTIMAL — hemat ${fmtRp(saving, true)}</div>`;
+  else if (saving > 100000000) verdict = `<div class="verdict good">✅ MENGUNTUNGKAN — hemat ${fmtRp(saving, true)}</div>`;
+  else if (saving > 0) verdict = `<div class="verdict warn">⚠️ Hemat tipis ${fmtRp(saving, true)}</div>`;
+  else verdict = `<div class="verdict bad">❌ Rugi ${fmtRp(-saving, true)}</div>`;
+  
+  document.getElementById('H-result').innerHTML = `
+    <div class="label">📊 Hasil Skenario Hybrid</div>
+    <div class="result-row">
+      <span class="key">Strategi Step 1</span>
+      <span class="val">${step === 'floating' ? 'Floating BRI' : step === 'negotiate' ? 'Negosiasi Extend' : 'Take-over'}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Pelunasan Parsial</span>
+      <span class="val">${events.length} event • ${fmtRp(events.reduce((s,e) => s + e.amount, 0), true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Lunas Total</span>
+      <span class="val">${lunasTotalMonth > 0 ? 'Bulan ' + lunasTotalMonth : '—'}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Total Cicilan</span>
+      <span class="val">${fmtRp(totalBayar, true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Total Bunga</span>
+      <span class="val bad">${fmtRp(totalBunga, true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Total Penalty</span>
+      <span class="val bad">${fmtRp(extraPenalty, true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Biaya Lain (switching, dll)</span>
+      <span class="val bad">${fmtRp(extraCost, true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Total Cash Out</span>
+      <span class="val big">${fmtRp(totalCashOut, true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Saving vs Status Quo (13%)</span>
+      <span class="val ${saving > 0 ? 'good' : 'bad'} big">${fmtRp(saving, true)}</span>
+    </div>
+    <div class="result-row">
+      <span class="key">Lunas Bulan ke-</span>
+      <span class="val good">${lastMonth} • ${fmtMonth(addMonths(akad, lastMonth))}</span>
+    </div>
+    ${verdict}
+  `;
+  
+  if (!_inUpdate) updateCompareTable();
+  return { totals: { totalCashOut, totalBunga, lunasDate: addMonths(akad, lastMonth) }, label: 'Hybrid', saving };
+}
+
+/* ==================== COMPARE TABLE ==================== */
+function updateCompareTable() {
+  if (_inUpdate) return; // prevent recursion
+  _inUpdate = true;
+  try {
+    const A = calcScenarioA();
+    const B = calcScenarioB();
+    const C = calcScenarioC();
+    const D = calcScenarioD();
+    const E = calcScenarioE();
+    const H = calcScenarioH();
+    
+    const all = [A, B, C, D, E, H];
+    const labels = ['A. Status Quo', 'B. Negosiasi', 'C. Take-over', 'D. Parsial', 'E. Lunas Total', 'H. Hybrid'];
+    
+    // Find best (lowest total cash out)
+    const cashOuts = all.map(s => s.totals.totalCashOut);
+    const minCash = Math.min(...cashOuts);
+    
+    const rows = [
+      { label: 'Total Cash Out', values: cashOuts.map(v => fmtRp(v, true)), highlight: (v, i) => cashOuts[i] === minCash },
+      { label: 'Total Bunga', values: all.map(s => fmtRp(s.totals.totalBunga, true)), highlight: () => false },
+      { label: 'Lunas', values: all.map(s => fmtMonth(s.totals.lunasDate)), highlight: () => false }
+    ];
+    
+    let html = '<div class="head"></div>';
+    labels.forEach(l => html += `<div class="head">${l}</div>`);
+    
+    rows.forEach(row => {
+      html += `<div class="row-label">${row.label}</div>`;
+      row.values.forEach((v, i) => {
+        const cls = row.highlight(v, i) ? 'best' : '';
+        html += `<div class="${cls}">${v}</div>`;
+      });
+    });
+    
+    document.getElementById('compare-table').innerHTML = html;
+    document.getElementById('compare-table').style.setProperty('--cols', 6);
+    
+    renderCompareChart(labels, cashOuts);
+  } finally {
+    _inUpdate = false;
+  }
+}
+
+function renderCompareChart(labels, values) {
+  const ctx = document.getElementById('chart-compare');
+  if (!ctx || typeof Chart === 'undefined') return;
+  try {
+  if (charts.compare) charts.compare.destroy();
+  
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const textColor = isDark ? '#f1f5f9' : '#0f172a';
+  const gridColor = isDark ? '#334155' : '#e2e8f0';
+  
+  const minVal = Math.min(...values);
+  const colors = values.map(v => v === minVal ? '#10b981' : '#94a3b8');
+  
+  charts.compare = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels.map(l => l.split('. ')[1]),
+      datasets: [{
+        label: 'Total Cash Out (Rp M)',
+        data: values.map(v => v / 1e9),
+        backgroundColor: colors,
+        borderRadius: 8
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { ticks: { color: textColor, callback: v => v.toFixed(2) + ' M' }, grid: { color: gridColor } },
+        x: { ticks: { color: textColor, font: { size: 10 } }, grid: { display: false } }
+      }
+    }
+  });
+  } catch(e) { console.warn('Compare chart error:', e); }
+}
+
+/* ==================== SCHEDULE ==================== */
+function renderSchedule() {
+  const range = document.getElementById('sched-range').value;
+  const scenario = document.getElementById('sched-scenario').value;
+  
+  let rateAfter = 13;
+  if (scenario === 'optimis') rateAfter = 10;
+  else if (scenario === 'realistis') rateAfter = 12;
+  
+  const akad = new Date(state.akad);
+  const phases = [
+    { fromMonth: 1, toMonth: state.masaFixed, ratePct: state.bunga },
+    { fromMonth: state.masaFixed + 1, toMonth: state.tenor, ratePct: rateAfter }
+  ];
+  const schedule = buildSchedule(state.plafond, akad, state.tenor, phases);
+  
+  let limit = range === 'all' ? schedule.length : parseInt(range);
+  const cur = currentMonth();
+  // Start from current month
+  const startIdx = Math.max(0, cur - 1);
+  const display = schedule.slice(startIdx, Math.min(startIdx + limit, schedule.length));
+  
+  let html = `<thead><tr>
+    <th>Bln</th><th>Tgl</th><th>Cicilan</th><th>Pokok</th><th>Bunga</th><th>OS</th>
+  </tr></thead><tbody>`;
+  
+  display.forEach((s, i) => {
+    const isCurrentMonth = s.month === cur || s.month === cur + 1;
+    html += `<tr class="${isCurrentMonth ? 'highlight' : ''}">
+      <td>${s.month}</td>
+      <td>${fmtMonth(s.date)}</td>
+      <td>${fmtRp(s.cicilan, true)}</td>
+      <td>${fmtRp(s.pokok, true)}</td>
+      <td>${fmtRp(s.bunga, true)}</td>
+      <td>${fmtRp(s.os, true)}</td>
+    </tr>`;
+  });
+  html += '</tbody>';
+  document.getElementById('schedule-table').innerHTML = html;
+}
+
+function exportCSV() {
+  const scenario = document.getElementById('sched-scenario').value;
+  let rateAfter = 13;
+  if (scenario === 'optimis') rateAfter = 10;
+  else if (scenario === 'realistis') rateAfter = 12;
+  
+  const akad = new Date(state.akad);
+  const phases = [
+    { fromMonth: 1, toMonth: state.masaFixed, ratePct: state.bunga },
+    { fromMonth: state.masaFixed + 1, toMonth: state.tenor, ratePct: rateAfter }
+  ];
+  const schedule = buildSchedule(state.plafond, akad, state.tenor, phases);
+  
+  let csv = 'Bulan,Tanggal,Rate,Cicilan,Pokok,Bunga,OS\n';
+  schedule.forEach(s => {
+    csv += `${s.month},${fmtMonth(s.date)},${s.rate}%,${Math.round(s.cicilan)},${Math.round(s.pokok)},${Math.round(s.bunga)},${Math.round(s.os)}\n`;
+  });
+  
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `kpr-schedule-${scenario}-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('✓ CSV diunduh');
+}
+
+/* ==================== SETTINGS ==================== */
+function loadSettings() {
+  document.getElementById('set-bank').value = state.bank;
+  document.getElementById('set-harga').value = state.harga;
+  document.getElementById('set-dp').value = state.dp;
+  document.getElementById('set-plafond').value = state.plafond;
+  document.getElementById('set-tenor').value = state.tenor;
+  document.getElementById('set-akad').value = state.akad;
+  document.getElementById('set-bunga').value = state.bunga;
+  document.getElementById('set-fixed').value = state.masaFixed;
+  document.getElementById('set-penalty').value = state.penalty;
+  document.getElementById('set-penalty-month').value = state.penaltyMonth;
+  document.getElementById('notes').value = state.notes;
+}
+
+function saveSettings() {
+  state.bank = document.getElementById('set-bank').value || 'BRI';
+  state.harga = parseFloat(document.getElementById('set-harga').value) || 0;
+  state.dp = parseFloat(document.getElementById('set-dp').value) || 0;
+  state.plafond = parseFloat(document.getElementById('set-plafond').value) || 0;
+  state.tenor = parseInt(document.getElementById('set-tenor').value) || 240;
+  state.akad = document.getElementById('set-akad').value || '2022-04-12';
+  state.bunga = parseFloat(document.getElementById('set-bunga').value) || 0;
+  state.masaFixed = parseInt(document.getElementById('set-fixed').value) || 60;
+  state.penalty = parseFloat(document.getElementById('set-penalty').value) || 0;
+  state.penaltyMonth = parseInt(document.getElementById('set-penalty-month').value) || 120;
+  saveState();
+  renderAll();
+  showToast('✓ Tersimpan');
+}
+
+function exportData() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `kpr-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('✓ Backup diunduh');
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      state = { ...DEFAULT_STATE, ...imported };
+      saveState();
+      loadSettings();
+      renderAll();
+      showToast('✓ Data diimport');
+    } catch(err) {
+      showToast('❌ File invalid');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function resetApp() {
+  if (!confirm('Yakin reset semua data ke default?')) return;
+  state = { ...DEFAULT_STATE };
+  saveState();
+  loadSettings();
+  renderAll();
+  showToast('✓ Direset');
+}
+
+/* ==================== NOTES AUTO-SAVE ==================== */
+let notesSaveTimer;
+function setupNotesAutoSave() {
+  const ta = document.getElementById('notes');
+  ta.addEventListener('input', () => {
+    clearTimeout(notesSaveTimer);
+    notesSaveTimer = setTimeout(() => {
+      state.notes = ta.value;
+      saveState();
+    }, 500);
+  });
+}
+
+/* ==================== INIT ==================== */
+function redrawAllCharts() {
+  Object.values(charts).forEach(c => c?.destroy?.());
+  charts = {};
+  renderDashboard();
+  updateCompareTable();
+}
+
+function renderAll() {
+  renderDashboard();
+  renderPartialEvents();
+  renderHybridEvents();
+  renderHybridStep1Params();
+  updateCompareTable();
+}
+
+function initTheme() {
+  const saved = state.theme;
+  if (saved === 'dark' || saved === 'light') {
+    document.documentElement.setAttribute('data-theme', saved);
+  } else {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+  }
+}
+
+function init() {
+  initTheme();
+  loadSettings();
+  setupNotesAutoSave();
+  renderAll();
+  
+  // Capture initial snapshot for "Batal Semua Perubahan"
+  setTimeout(() => { _initialSnapshot = captureSnapshot(); }, 100);
+  
+  // PWA registration
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(err => console.warn('SW fail:', err));
+    });
+  }
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
