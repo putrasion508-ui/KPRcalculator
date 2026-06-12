@@ -832,15 +832,19 @@ body {
           </div>
           <div class="input-group">
             <label>Bulan ke-</label>
-            <input type="number" id="D-month" value="125" step="1" min="1" max="240">
+            <input type="number" id="D-month" value="60" step="1" min="1" max="240">
+            <div class="help">Bulan ke-1 = akad. Bulan ini = 50</div>
           </div>
         </div>
         <button class="btn btn-primary btn-small" onclick="addPartialEvent()">+ Tambah Event</button>
         <div class="event-list" id="D-events"></div>
         <button class="btn btn-secondary btn-small" id="D-clear-btn" onclick="clearAllPartial()" style="display:none;margin-top:8px">🗑️ Hapus Semua Event</button>
-        <button class="btn btn-success btn-small" id="D-apply-actual-btn" onclick="applyToActual()" style="display:none;margin-top:8px;background:#10b981;color:white;border:none">
+        <button id="D-apply-actual-btn" onclick="applyToActual()" style="display:none;margin-top:10px;background:#10b981;color:white;border:none;padding:12px 16px;border-radius:8px;font-weight:600;font-size:13px;width:100%;cursor:pointer">
           ✅ Masukan ke Kondisi Aktual (yang sudah dilakukan)
         </button>
+        <div class="help" style="margin-top:8px;font-size:11px">
+          💡 Untuk catat parsial yang <b>sudah</b> dilakukan: input dengan bulan ≤ 50, lalu klik tombol hijau di atas. App akan otomatis update OS, cicilan, dan timeline lunas.
+        </div>
         <div class="result-box" id="D-result"></div>
       </div>
     </div>
@@ -2530,9 +2534,18 @@ function renderPartialEvents() {
   const k = currentMonth();
   const eligibleCount = state.partialEvents.filter(e => e.month <= k).length;
   if (applyBtn) {
-    applyBtn.style.display = eligibleCount > 0 ? 'block' : 'none';
+    // ALWAYS show button when events exist - workflow visibility
+    applyBtn.style.display = 'block';
     if (eligibleCount > 0) {
-      applyBtn.innerHTML = `✅ Masukan ke Kondisi Aktual (${eligibleCount} event di bulan ≤ ${k})`;
+      applyBtn.innerHTML = `✅ Masukan ${eligibleCount} event ke Kondisi Aktual (yang sudah dilakukan)`;
+      applyBtn.disabled = false;
+      applyBtn.style.opacity = '1';
+      applyBtn.style.cursor = 'pointer';
+    } else {
+      applyBtn.innerHTML = `ℹ️ Masukan ke Kondisi Aktual (perlu event di bulan ≤ ${k})`;
+      applyBtn.disabled = true;
+      applyBtn.style.opacity = '0.5';
+      applyBtn.style.cursor = 'not-allowed';
     }
   }
   

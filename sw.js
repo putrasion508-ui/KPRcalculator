@@ -1,7 +1,7 @@
 // Service Worker untuk Kalkulator KPR PWA
-// Version: v1.7.0 - Mode A/B for actual partials + apply from Scenario D
+// Version: v1.8.0 - Apply button always visible + auto-update explained
 
-const CACHE_NAME = 'kpr-app-v8';
+const CACHE_NAME = 'kpr-app-v9';
 const CACHE_FILES = [
   './',
   './index.html',
